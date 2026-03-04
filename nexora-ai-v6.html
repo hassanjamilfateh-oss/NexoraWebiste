@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexora Ai. — Automate Your Business With AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════
+   TOKENS
+═══════════════════════════ */
+:root{
+  --ink:#1A1A1A;
+  --off:#F8F8F6;
+  --white:#FFFFFF;
+  --coral:#FF5733;
+  --coral-lo:rgba(255,87,51,.10);
+  --teal:#00B894;
+  --g50:#F2F2EF;
+  --g100:#E8E8E4;
+  --g200:#D0D0CB;
+  --g400:#9F9F9A;
+  --g600:#6B6B66;
+  --g800:#3D3D3A;
+  --nav-h:64px;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --r:20px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--off);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased;cursor:none;}
+h1,h2,h3,h4,h5{font-family:'Space Grotesk',sans-serif;letter-spacing:-.03em;}
+a,button{cursor:none;}
+
+/* ── cursor ── */
+#cur{width:10px;height:10px;background:var(--coral);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform .15s var(--ease),width .2s,height .2s;}
+#cur-r{width:38px;height:38px;border:1.5px solid var(--coral);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);opacity:.35;transition:width .25s var(--ease),height .25s var(--ease),opacity .25s;}
+@media(hover:none){#cur,#cur-r{display:none;}body{cursor:auto;}}
+
+/* ═══════════════════════════
+   NAV
+═══════════════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;
+  z-index:1000;height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 52px;
+  background:rgba(248,248,246,.93);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  border-bottom:1px solid rgba(26,26,26,.07);
+  transition:box-shadow .3s;
+}
+nav.sh{box-shadow:0 2px 24px rgba(26,26,26,.06);}
+
+/* ── LOGO IMAGE — proper transparent PNG ── */
+.nav-logo{cursor:pointer;display:flex;align-items:center;}
+.nav-logo img{height:36px;width:auto;display:block;}
+
+.nav-links{display:flex;align-items:center;gap:2px;}
+.nav-links a{
+  font-family:'Space Grotesk',sans-serif;font-size:13.5px;font-weight:500;
+  color:var(--g600);padding:7px 12px;border-radius:8px;
+  cursor:pointer;transition:color .2s,background .2s;white-space:nowrap;
+}
+.nav-links a:hover,.nav-links a.on{color:var(--ink);background:var(--g50);}
+
+.nav-r{display:flex;align-items:center;gap:10px;}
+.btn-ghost{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--ink);border:1.5px solid var(--g200);background:transparent;padding:8px 16px;border-radius:8px;cursor:pointer;transition:all .2s;letter-spacing:-.01em;}
+.btn-ghost:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+.btn-fill{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;background:var(--ink);color:#fff;border:none;padding:9px 18px;border-radius:8px;cursor:pointer;transition:all .2s;letter-spacing:-.01em;}
+.btn-fill:hover{background:var(--coral);transform:translateY(-1px);box-shadow:0 6px 18px rgba(255,87,51,.25);}
+
+.ham{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;border-radius:8px;}
+.ham:hover{background:var(--g50);}
+.ham span{display:block;width:22px;height:1.5px;background:var(--ink);border-radius:2px;transition:all .3s;}
+.mob{display:none;position:fixed;top:var(--nav-h);left:0;right:0;background:#fff;border-bottom:1px solid var(--g100);padding:14px 24px 20px;flex-direction:column;gap:2px;z-index:999;box-shadow:0 16px 40px rgba(0,0,0,.07);}
+.mob.open{display:flex;}
+.mob a{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:500;color:var(--ink);padding:11px 8px;border-bottom:1px solid var(--g100);cursor:pointer;}
+
+/* ═══════════════════════════
+   PAGES
+═══════════════════════════ */
+.page{display:none;padding-top:var(--nav-h);}
+.page.active{display:block;}
+
+/* ═══════════════════════════
+   COMMON BUTTONS
+═══════════════════════════ */
+.btn-p{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;
+  background:var(--ink);color:#fff;border:none;
+  padding:13px 24px;border-radius:10px;cursor:pointer;letter-spacing:-.02em;
+  transition:all .3s var(--ease);position:relative;overflow:hidden;
+}
+.btn-p::after{content:'';position:absolute;inset:0;background:var(--coral);opacity:0;transition:opacity .25s;}
+.btn-p:hover::after{opacity:1;}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(255,87,51,.25);}
+.btn-p>*{position:relative;z-index:1;}
+.btn-p .arr{transition:transform .2s;}
+.btn-p:hover .arr{transform:translateX(4px);}
+.btn-o{display:inline-flex;align-items:center;gap:8px;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;background:transparent;color:var(--ink);border:1.5px solid var(--g200);padding:12px 24px;border-radius:10px;cursor:pointer;letter-spacing:-.02em;transition:all .3s var(--ease);}
+.btn-o:hover{border-color:var(--ink);transform:translateY(-2px);}
+
+/* ═══════════════════════════
+   ANIMATIONS
+═══════════════════════════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(26px);}to{opacity:1;transform:none;}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+@keyframes floatB{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+@keyframes pulseRing{0%,100%{box-shadow:0 0 0 0 rgba(255,87,51,.35);}70%{box-shadow:0 0 0 8px transparent;}}
+@keyframes gradFlow{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+@keyframes lineIn{from{width:0;}to{width:var(--w,100%);}}
+@keyframes barIn{from{height:0;}to{height:var(--h);}}
+@keyframes counterUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+@keyframes shimmer{0%{opacity:.5;}50%{opacity:1;}100%{opacity:.5;}}
+@keyframes slideLeft{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;}}
+@keyframes nodeShine{0%,100%{r:3px;opacity:.6;}50%{r:5px;opacity:1;}}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .75s var(--ease),transform .75s var(--ease);}
+.rv.on{opacity:1;transform:none;}
+.d1{transition-delay:.07s;}.d2{transition-delay:.14s;}.d3{transition-delay:.21s;}
+.d4{transition-delay:.28s;}.d5{transition-delay:.35s;}.d6{transition-delay:.42s;}
+.rvl{opacity:0;transform:translateX(-20px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
+.rvl.on{opacity:1;transform:none;}
+
+/* label */
+.lbl{display:inline-flex;align-items:center;gap:7px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--coral);margin-bottom:18px;}
+.lbl::before{content:'';width:18px;height:2px;background:var(--coral);border-radius:2px;}
+
+/* ═══════════════════════════
+   HOME HERO
+═══════════════════════════ */
+.hero{
+  min-height:calc(100vh - var(--nav-h));
+  max-width:1280px;margin:0 auto;padding:80px 52px 60px;
+  display:grid;grid-template-columns:1.05fr .95fr;gap:80px;align-items:center;
+}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--g100);border-radius:100px;padding:6px 14px 6px 8px;margin-bottom:30px;font-family:'Space Grotesk',sans-serif;font-size:12.5px;font-weight:500;color:var(--g600);animation:fadeUp .6s ease both;}
+.eyebrow-dot{width:8px;height:8px;background:var(--coral);border-radius:50%;animation:pulseRing 2s infinite;flex-shrink:0;}
+.h1{font-size:clamp(46px,5.8vw,76px);font-weight:700;line-height:1.02;color:var(--ink);margin-bottom:26px;letter-spacing:-.04em;animation:fadeUp .65s .07s ease both;}
+.h1-accent{background:linear-gradient(115deg,var(--ink) 35%,var(--coral) 65%,#FF8A6B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200%;animation:gradFlow 6s ease-in-out infinite;}
+.hero-p{font-size:18px;color:var(--g600);line-height:1.75;max-width:490px;margin-bottom:42px;animation:fadeUp .65s .14s ease both;}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;animation:fadeUp .65s .21s ease both;}
+.hero-trust{display:flex;align-items:center;gap:16px;margin-top:44px;animation:fadeUp .65s .28s ease both;}
+.avas{display:flex;align-items:center;}
+.ava{width:32px;height:32px;border-radius:50%;border:2.5px solid var(--off);background:var(--ink);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;color:#fff;margin-left:-8px;flex-shrink:0;}
+.ava:first-child{margin-left:0;}
+.trust-t{font-size:13px;color:var(--g600);}
+.trust-t strong{color:var(--ink);}
+
+/* ═══════════════════════════
+   HERO VISUAL — Workflow diagram
+═══════════════════════════ */
+.hero-right{position:relative;animation:fadeIn .8s .2s ease both;}
+
+.workflow-card{
+  background:#fff;border:1px solid var(--g100);
+  border-radius:var(--r);
+  box-shadow:0 28px 72px rgba(26,26,26,.09);
+  overflow:hidden;
+  animation:float 7s ease-in-out infinite;
+}
+.wf-header{
+  padding:16px 22px;
+  border-bottom:1px solid var(--g100);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.wf-title{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--ink);letter-spacing:-.01em;}
+.wf-live{display:flex;align-items:center;gap:6px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;color:var(--teal);letter-spacing:.04em;}
+.wf-live-dot{width:7px;height:7px;background:var(--teal);border-radius:50%;animation:pulseRing 1.8s infinite;}
+
+.wf-body{padding:22px;}
+
+/* Automation flow steps */
+.flow-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.flow-step{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 14px;
+  background:var(--g50);border:1px solid var(--g100);
+  border-radius:12px;position:relative;
+  transition:all .3s var(--ease);
+  animation:slideLeft .5s var(--ease) both;
+}
+.flow-step:nth-child(1){animation-delay:.3s;}
+.flow-step:nth-child(2){animation-delay:.5s;}
+.flow-step:nth-child(3){animation-delay:.7s;}
+.flow-step:nth-child(4){animation-delay:.9s;}
+.flow-step:hover{border-color:rgba(255,87,51,.2);background:#fff;transform:translateX(3px);}
+.fs-icon{width:36px;height:36px;border-radius:10px;background:#fff;border:1px solid var(--g100);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.fs-label{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.fs-sub{font-size:11px;color:var(--g400);}
+.fs-badge{
+  margin-left:auto;flex-shrink:0;
+  font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;
+  padding:3px 9px;border-radius:100px;text-transform:uppercase;letter-spacing:.04em;
+}
+.badge-green{background:rgba(0,184,148,.12);color:#00916e;}
+.badge-blue{background:rgba(99,130,255,.12);color:#3a5bcc;}
+.badge-amber{background:rgba(245,158,11,.12);color:#c07c00;}
+
+/* Mini metrics row */
+.wf-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.wm{background:var(--g50);border:1px solid var(--g100);border-radius:12px;padding:14px 12px;text-align:center;}
+.wm-v{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--ink);letter-spacing:-.03em;line-height:1;}
+.wm-v span{color:var(--coral);}
+.wm-l{font-size:10px;color:var(--g400);margin-top:4px;font-weight:500;}
+.wm-chg{font-size:10px;font-weight:700;margin-top:3px;color:#00916e;}
+
+/* Hero float badges */
+.fl-badge{position:absolute;background:#fff;border:1px solid var(--g100);border-radius:12px;padding:10px 14px;box-shadow:0 10px 28px rgba(26,26,26,.10);font-family:'Space Grotesk',sans-serif;display:flex;align-items:center;gap:9px;white-space:nowrap;z-index:5;}
+.fl-v{font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-.03em;line-height:1;}
+.fl-l{font-size:10px;color:var(--g400);margin-top:2px;}
+.fl-ic{font-size:18px;}
+.fb1{bottom:-16px;left:-24px;animation:floatB 6s 1s ease-in-out infinite;}
+.fb2{top:-14px;right:-20px;animation:float 5.5s 1.8s ease-in-out infinite;}
+
+/* ═══════════════════════════
+   TICKER
+═══════════════════════════ */
+.ticker-wrap{overflow:hidden;border-top:1px solid var(--g100);border-bottom:1px solid var(--g100);padding:18px 0;background:#fff;}
+.tl{text-align:center;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--g400);margin-bottom:14px;}
+.ticker-row{display:flex;gap:52px;width:max-content;animation:ticker 30s linear infinite;align-items:center;}
+.ticker-row:hover{animation-play-state:paused;}
+.tk{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--g400);white-space:nowrap;transition:color .3s;cursor:default;display:flex;align-items:center;gap:10px;}
+.tk:hover{color:var(--ink);}
+.tks{width:4px;height:4px;background:var(--coral);border-radius:50%;opacity:.6;}
+
+/* ═══════════════════════════
+   METRICS BANNER
+═══════════════════════════ */
+.met-band{background:#fff;border-top:1px solid var(--g100);border-bottom:1px solid var(--g100);}
+.met-row{max-width:1280px;margin:0 auto;padding:52px;display:grid;grid-template-columns:repeat(4,1fr);}
+.met{padding:0 36px;border-right:1px solid var(--g200);text-align:center;transition:transform .3s var(--ease);}
+.met:first-child{padding-left:0;}.met:last-child{border-right:none;padding-right:0;}
+.met:hover{transform:scale(1.06);}
+.met-n{font-family:'Space Grotesk',sans-serif;font-size:50px;font-weight:700;line-height:1;letter-spacing:-.05em;color:var(--ink);margin-bottom:6px;}
+.met-n em{font-style:normal;color:var(--coral);}
+.met-l{font-size:14px;color:var(--g600);}
+
+/* ═══════════════════════════
+   SECTION WRAPPERS
+═══════════════════════════ */
+.sw{max-width:1280px;margin:0 auto;padding:96px 52px;}
+.sh{max-width:580px;margin-bottom:56px;}
+.h2{font-size:clamp(32px,4vw,52px);font-weight:700;line-height:1.07;color:var(--ink);margin-bottom:14px;letter-spacing:-.04em;}
+.sp{font-size:17px;color:var(--g600);line-height:1.75;}
+
+/* ═══════════════════════════
+   AUTOMATION DARK SECTION
+═══════════════════════════ */
+.dark-band{background:var(--ink);position:relative;overflow:hidden;}
+.dark-band::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 80% 50%,rgba(255,87,51,.09) 0%,transparent 65%),radial-gradient(ellipse 40% 60% at 15% 80%,rgba(0,184,148,.06) 0%,transparent 65%);pointer-events:none;}
+.dark-grid{max-width:1280px;margin:0 auto;padding:88px 52px;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;position:relative;z-index:1;}
+.dark-left h2{font-size:clamp(30px,3.8vw,48px);font-weight:700;color:#fff;line-height:1.09;letter-spacing:-.04em;margin-bottom:16px;}
+.dark-left h2 em{font-style:normal;color:var(--coral);}
+.dark-left p{font-size:16px;color:rgba(255,255,255,.5);line-height:1.8;margin-bottom:36px;}
+.ar-list{display:flex;flex-direction:column;gap:9px;}
+.ar{display:flex;align-items:center;gap:13px;padding:15px 18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:13px;transition:all .3s var(--ease);cursor:default;}
+.ar:hover{background:rgba(255,255,255,.08);border-color:rgba(255,87,51,.25);transform:translateX(5px);}
+.ar-ic{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.ar-title{font-family:'Space Grotesk',sans-serif;font-size:13.5px;font-weight:600;color:#fff;margin-bottom:2px;}
+.ar-sub{font-size:12px;color:rgba(255,255,255,.35);}
+.ar-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal);flex-shrink:0;animation:pulseRing 2s infinite;}
+
+/* ═══════════════════════════
+   BENTO SERVICES
+═══════════════════════════ */
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;}
+.bc{background:#fff;border:1px solid var(--g100);border-radius:var(--r);padding:32px 28px;transition:all .35s var(--ease);cursor:default;position:relative;overflow:hidden;}
+.bc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--coral),#FF9173);transform:scaleX(0);transform-origin:left;transition:transform .4s var(--ease);}
+.bc:hover{border-color:rgba(255,87,51,.18);box-shadow:0 18px 52px rgba(26,26,26,.07);transform:translateY(-4px);}
+.bc:hover::after{transform:scaleX(1);}
+.bc.dark{background:var(--ink);border-color:transparent;}
+.bc.dark h3{color:#fff;}.bc.dark p{color:rgba(255,255,255,.45);}
+.bc.dark .bi{background:rgba(255,255,255,.07);}
+.bc.dark:hover{box-shadow:0 18px 52px rgba(26,26,26,.2);}
+.s4{grid-column:span 4;}.s6{grid-column:span 6;}.s8{grid-column:span 8;}.s12{grid-column:span 12;}
+.bi{width:44px;height:44px;border-radius:13px;background:var(--g50);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:18px;transition:background .3s,transform .3s var(--ease);}
+.bc:hover .bi{background:var(--coral-lo);transform:scale(1.1) rotate(-4deg);}
+.bc h3{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:9px;letter-spacing:-.03em;}
+.bc p{font-size:14px;color:var(--g600);line-height:1.7;}
+.bc-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px;}
+.tg{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;color:var(--g600);background:var(--g50);border:1px solid var(--g100);padding:3px 9px;border-radius:100px;text-transform:uppercase;letter-spacing:.04em;}
+.bc.dark .tg{background:rgba(255,255,255,.07);color:rgba(255,255,255,.45);border-color:transparent;}
+
+/* ═══════════════════════════
+   STEPS
+═══════════════════════════ */
+.process-bg{background:#fff;border-top:1px solid var(--g100);border-bottom:1px solid var(--g100);}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;margin-top:60px;}
+.step-line{position:absolute;top:25px;left:calc(12.5% + 25px);right:calc(12.5% + 25px);height:1px;background:linear-gradient(90deg,var(--coral),var(--g200));z-index:0;}
+.step{text-align:center;padding:0 20px;position:relative;z-index:1;}
+.step-n{width:50px;height:50px;border-radius:50%;background:#fff;border:2px solid var(--g200);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--g400);margin:0 auto 22px;transition:all .35s var(--ease);}
+.step:hover .step-n{background:var(--coral);border-color:var(--coral);color:#fff;transform:scale(1.12);box-shadow:0 8px 22px rgba(255,87,51,.28);}
+.step h4{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;margin-bottom:8px;letter-spacing:-.02em;}
+.step p{font-size:13px;color:var(--g600);line-height:1.7;}
+
+/* ═══════════════════════════
+   COMPARISON — Before/After
+═══════════════════════════ */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:56px;}
+.compare-col{border-radius:var(--r);overflow:hidden;}
+.compare-head{padding:18px 24px;display:flex;align-items:center;gap:10px;}
+.compare-head-before{background:#FEF2F0;border:1px solid #FDD5CC;}
+.compare-head-after{background:#F0FBF7;border:1px solid #BBEDDF;}
+.ch-badge{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.ch-badge.before{color:#C0392B;}
+.ch-badge.after{color:#00916e;}
+.compare-items{padding:0;background:#fff;border:1px solid var(--g100);border-top:none;}
+.ci{display:flex;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--g100);font-size:14px;color:var(--g600);}
+.ci:last-child{border-bottom:none;}
+.ci-icon{font-size:16px;flex-shrink:0;width:24px;text-align:center;}
+.ci strong{color:var(--ink);font-weight:600;}
+
+/* ═══════════════════════════
+   FEATURE SPOTLIGHT — Cohere style
+═══════════════════════════ */
+.spotlight-list{display:flex;flex-direction:column;gap:0;}
+.spotlight-item{
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
+  padding:80px 0;
+  border-top:1px solid var(--g100);
+}
+.spotlight-item:first-child{border-top:none;padding-top:0;}
+.spotlight-item.flip{direction:rtl;}
+.spotlight-item.flip>*{direction:ltr;}
+.spot-num{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;color:var(--coral);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;}
+.spot-h{font-family:'Space Grotesk',sans-serif;font-size:clamp(26px,3vw,38px);font-weight:700;color:var(--ink);letter-spacing:-.03em;line-height:1.1;margin-bottom:14px;}
+.spot-p{font-size:16px;color:var(--g600);line-height:1.78;margin-bottom:28px;}
+.spot-ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.spot-ul li{font-size:14px;color:var(--g600);display:flex;align-items:flex-start;gap:8px;line-height:1.6;}
+.spot-ul li::before{content:'✓';color:var(--coral);font-weight:700;flex-shrink:0;margin-top:1px;}
+
+/* Feature visual boxes */
+.spot-vis{
+  background:var(--g50);border:1px solid var(--g100);
+  border-radius:var(--r);overflow:hidden;
+}
+
+/* Agent activity visual */
+.agent-visual{padding:24px;}
+.av-header{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--g600);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;}
+.av-live{display:flex;align-items:center;gap:5px;color:var(--teal);font-size:11px;}
+.av-live-dot{width:6px;height:6px;background:var(--teal);border-radius:50%;animation:pulseRing 1.5s infinite;}
+.activity-feed{display:flex;flex-direction:column;gap:8px;}
+.af-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border:1px solid var(--g100);border-radius:10px;animation:slideLeft .4s var(--ease) both;}
+.af-row:nth-child(1){animation-delay:.1s;}.af-row:nth-child(2){animation-delay:.3s;}.af-row:nth-child(3){animation-delay:.5s;}.af-row:nth-child(4){animation-delay:.7s;}
+.af-ic{font-size:14px;flex-shrink:0;}
+.af-text{font-size:12px;color:var(--ink);font-weight:500;flex:1;}
+.af-time{font-size:11px;color:var(--g400);}
+
+/* Bar chart visual */
+.chart-vis{padding:24px;}
+.chart-title{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;letter-spacing:-.02em;}
+.chart-sub{font-size:12px;color:var(--g400);margin-bottom:20px;}
+.bar-chart{display:flex;gap:8px;align-items:flex-end;height:120px;}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.bar{width:100%;border-radius:6px 6px 0 0;background:var(--g100);transition:background .3s;position:relative;overflow:hidden;}
+.bar::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--coral),#FF8A6B);animation:barIn .8s var(--ease) both;}
+.bar:nth-child(1)::after{--h:50%;height:50%;} /* placeholder for JS */
+.bar-lbl{font-family:'Space Grotesk',sans-serif;font-size:10px;color:var(--g400);font-weight:600;}
+.chart-legend{display:flex;gap:16px;margin-top:14px;}
+.cl{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--g600);}
+.cl-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+
+/* Social analytics visual */
+.social-vis{padding:24px;}
+.social-platform{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:1px solid var(--g100);border-radius:12px;margin-bottom:10px;transition:all .3s var(--ease);}
+.social-platform:hover{border-color:rgba(255,87,51,.2);transform:translateX(3px);}
+.sp-name{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--ink);width:80px;}
+.sp-bar-track{flex:1;height:8px;background:var(--g100);border-radius:4px;overflow:hidden;}
+.sp-bar-fill{height:100%;border-radius:4px;transition:width .8s var(--ease);}
+.sp-val{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--coral);width:40px;text-align:right;}
+
+/* ═══════════════════════════
+   INDUSTRIES
+═══════════════════════════ */
+.ind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.ic{border:1px solid var(--g100);border-radius:var(--r);padding:28px 24px;background:#fff;transition:all .35s var(--ease);cursor:default;position:relative;overflow:hidden;}
+.ic::before{content:attr(data-em);position:absolute;bottom:-12px;right:-4px;font-size:88px;opacity:.05;pointer-events:none;transition:opacity .3s,transform .3s var(--ease);line-height:1;}
+.ic:hover::before{opacity:.08;transform:scale(1.1);}
+.ic:hover{border-color:rgba(255,87,51,.18);box-shadow:0 16px 44px rgba(26,26,26,.07);transform:translateY(-4px);}
+.ic-em{font-size:32px;display:block;margin-bottom:14px;}
+.ic h3{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:9px;letter-spacing:-.03em;}
+.ic p{font-size:13px;color:var(--g600);line-height:1.7;margin-bottom:14px;}
+.ic-ul{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.ic-ul li{font-size:13px;color:var(--g600);display:flex;align-items:center;gap:7px;}
+.ic-ul li::before{content:'';width:5px;height:5px;background:var(--coral);border-radius:50%;flex-shrink:0;}
+
+/* ═══════════════════════════
+   CASE STUDIES
+═══════════════════════════ */
+.cases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.case{border:1px solid var(--g100);border-radius:var(--r);overflow:hidden;background:#fff;transition:all .35s var(--ease);}
+.case:hover{box-shadow:0 18px 52px rgba(26,26,26,.08);transform:translateY(-4px);border-color:rgba(255,87,51,.18);}
+.case-hd{padding:22px;background:var(--g50);}
+.case-co{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--ink);}
+.case-in{font-size:11px;color:var(--g400);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;font-weight:700;}
+.case-bd{padding:22px;}
+.cs-row{display:flex;gap:9px;margin-bottom:14px;}
+.cs{flex:1;background:var(--g50);border:1px solid var(--g100);border-radius:10px;padding:12px 9px;text-align:center;}
+.cs-v{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--coral);letter-spacing:-.04em;}
+.cs-l{font-size:10px;color:var(--g400);margin-top:2px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;}
+.case-desc{font-size:13px;color:var(--g600);line-height:1.65;}
+
+/* ═══════════════════════════
+   TESTIMONIALS
+═══════════════════════════ */
+.testi-row{display:flex;gap:16px;overflow-x:auto;padding-bottom:12px;scroll-snap-type:x mandatory;scrollbar-width:none;}
+.testi-row::-webkit-scrollbar{display:none;}
+.tc{flex:0 0 360px;background:#fff;border:1px solid var(--g100);border-radius:var(--r);padding:28px;scroll-snap-align:start;transition:all .35s var(--ease);}
+.tc:hover{border-color:rgba(255,87,51,.18);box-shadow:0 12px 36px rgba(26,26,26,.07);transform:translateY(-4px);}
+.tq{font-family:'Space Grotesk',sans-serif;font-size:42px;font-weight:700;color:var(--coral);line-height:1;margin-bottom:10px;}
+.tt{font-size:14px;color:var(--g600);line-height:1.72;margin-bottom:20px;}
+.ta{display:flex;align-items:center;gap:10px;}
+.tava{width:40px;height:40px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+.tn{font-family:'Space Grotesk',sans-serif;font-size:13.5px;font-weight:700;color:var(--ink);}
+.tr{font-size:12px;color:var(--g400);margin-top:2px;}
+
+/* ═══════════════════════════
+   WHY AI / ROI
+═══════════════════════════ */
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;}
+.wi-list{display:flex;flex-direction:column;gap:14px;margin-top:8px;}
+.wi{display:flex;gap:14px;padding:18px;background:#fff;border:1px solid var(--g100);border-radius:14px;transition:all .3s var(--ease);}
+.wi:hover{border-color:rgba(255,87,51,.2);transform:translateX(4px);box-shadow:0 6px 24px rgba(26,26,26,.06);}
+.wi-ic{width:42px;height:42px;border-radius:11px;background:var(--coral-lo);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.wi-t{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px;letter-spacing:-.01em;}
+.wi-d{font-size:13px;color:var(--g600);line-height:1.65;}
+.roi-box{background:var(--ink);border-radius:var(--r);padding:36px;position:sticky;top:calc(var(--nav-h)+24px);}
+.roi-head{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--g400);margin-bottom:28px;}
+.roi-sl{margin-bottom:20px;}
+.roi-lr{display:flex;justify-content:space-between;margin-bottom:8px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;}
+.roi-lr span:first-child{color:rgba(255,255,255,.45);}
+.roi-lr .rv{color:var(--coral);}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:rgba(255,255,255,.12);outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--coral);cursor:pointer;box-shadow:0 0 0 4px rgba(255,87,51,.2);}
+.roi-res{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;margin-top:22px;text-align:center;}
+.roi-big{font-family:'Space Grotesk',sans-serif;font-size:46px;font-weight:700;color:var(--coral);letter-spacing:-.05em;line-height:1;}
+.roi-sub{font-size:12px;color:rgba(255,255,255,.38);margin-top:6px;}
+.btn-teal{display:inline-flex;align-items:center;gap:8px;margin-top:16px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;background:var(--teal);color:var(--ink);border:none;padding:10px 20px;border-radius:9px;cursor:pointer;transition:all .3s var(--ease);letter-spacing:-.01em;}
+.btn-teal:hover{transform:translateY(-2px);box-shadow:0 7px 22px rgba(0,184,148,.28);}
+
+/* ═══════════════════════════
+   ABOUT
+═══════════════════════════ */
+.about-split{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.avals{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:30px;}
+.aval{background:#fff;border:1px solid var(--g100);border-radius:14px;padding:20px;transition:all .3s var(--ease);}
+.aval:hover{border-color:rgba(255,87,51,.2);transform:translateY(-2px);box-shadow:0 7px 22px rgba(26,26,26,.06);}
+.aval-ic{font-size:22px;margin-bottom:8px;}
+.aval h4{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;margin-bottom:5px;letter-spacing:-.01em;}
+.aval p{font-size:13px;color:var(--g600);line-height:1.65;}
+.about-vis{background:var(--ink);border-radius:var(--r);padding:38px 32px;}
+.stats2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.sb{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:20px;text-align:center;transition:transform .3s;}
+.sb:hover{transform:scale(1.04);}
+.sb-v{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;color:#fff;letter-spacing:-.04em;}
+.sb-v em{font-style:normal;color:var(--coral);}
+.sb-l{font-size:13px;color:rgba(255,255,255,.38);margin-top:4px;}
+
+/* ═══════════════════════════
+   FAQ
+═══════════════════════════ */
+.faq-list{display:flex;flex-direction:column;gap:9px;max-width:740px;margin:56px auto 0;}
+.faq-item{background:#fff;border:1px solid var(--g100);border-radius:14px;overflow:hidden;transition:all .3s var(--ease);}
+.faq-item.open{border-color:rgba(255,87,51,.2);box-shadow:0 7px 24px rgba(26,26,26,.06);}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:19px 22px;cursor:pointer;gap:16px;}
+.faq-qt{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-.02em;}
+.faq-ic{width:26px;height:26px;border-radius:50%;background:var(--g50);border:1px solid var(--g100);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;transition:all .3s var(--ease);flex-shrink:0;}
+.faq-item.open .faq-ic{background:var(--coral);border-color:var(--coral);color:#fff;transform:rotate(45deg);}
+.faq-body{max-height:0;overflow:hidden;transition:max-height .4s var(--ease);}
+.faq-item.open .faq-body{max-height:300px;}
+.faq-ans{padding:0 22px 20px;font-size:14px;color:var(--g600);line-height:1.8;}
+
+/* ═══════════════════════════
+   CONTACT
+═══════════════════════════ */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;}
+.cd-row{display:flex;align-items:center;gap:13px;padding:13px 16px;border:1px solid var(--g100);border-radius:12px;background:#fff;margin-bottom:10px;transition:all .3s var(--ease);}
+.cd-row:hover{border-color:rgba(255,87,51,.2);transform:translateX(4px);}
+.cd-ic{width:37px;height:37px;background:var(--g50);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.cd-t{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.cd-v{font-size:13px;color:var(--g600);}
+.form-wrap{display:flex;flex-direction:column;gap:14px;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fg label{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--ink);letter-spacing:.01em;}
+.fg input,.fg select,.fg textarea{padding:11px 14px;background:#fff;border:1.5px solid var(--g200);border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color .2s;-webkit-appearance:none;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--coral);box-shadow:0 0 0 3px rgba(255,87,51,.1);}
+.fg textarea{resize:vertical;min-height:110px;}
+
+/* ═══════════════════════════
+   CTA BAND
+═══════════════════════════ */
+.cta-band{background:var(--ink);padding:96px 52px;text-align:center;position:relative;overflow:hidden;}
+.cta-band::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(255,87,51,.08) 0%,transparent 65%);pointer-events:none;}
+.cta-in{max-width:620px;margin:0 auto;position:relative;z-index:1;}
+.cta-band h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(34px,4.5vw,58px);font-weight:700;color:#fff;line-height:1.06;margin-bottom:14px;letter-spacing:-.04em;}
+.cta-band h2 em{font-style:normal;color:var(--coral);}
+.cta-band p{font-size:17px;color:rgba(255,255,255,.45);margin-bottom:40px;line-height:1.75;}
+.btn-w{display:inline-flex;align-items:center;gap:8px;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;background:#fff;color:var(--ink);border:none;padding:13px 26px;border-radius:10px;cursor:pointer;transition:all .3s var(--ease);letter-spacing:-.02em;}
+.btn-w:hover{background:var(--coral);color:#fff;transform:translateY(-2px);box-shadow:0 10px 28px rgba(255,87,51,.28);}
+.btn-w .arr{transition:transform .2s;}
+.btn-w:hover .arr{transform:translateX(4px);}
+
+/* ═══════════════════════════
+   FOOTER
+═══════════════════════════ */
+footer{background:var(--ink);padding:60px 52px 30px;border-top:1px solid rgba(255,255,255,.05);}
+.foot-in{max-width:1280px;margin:0 auto;}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:52px;margin-bottom:48px;}
+.foot-logo{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:-.04em;display:flex;align-items:baseline;}
+.foot-logo-dot{width:7px;height:7px;background:var(--coral);border-radius:50%;margin-left:2px;margin-bottom:2px;flex-shrink:0;}
+.foot-desc{font-size:14px;color:rgba(255,255,255,.35);line-height:1.75;margin-top:14px;max-width:270px;}
+.foot-col h5{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.28);margin-bottom:16px;}
+.foot-col ul{list-style:none;display:flex;flex-direction:column;gap:9px;}
+.foot-col a{font-size:14px;color:rgba(255,255,255,.44);cursor:pointer;transition:color .2s;}
+.foot-col a:hover{color:#fff;}
+.foot-bot{display:flex;align-items:center;justify-content:space-between;padding-top:24px;border-top:1px solid rgba(255,255,255,.06);}
+.foot-copy{font-size:13px;color:rgba(255,255,255,.24);}
+.foot-copy em{color:var(--coral);font-style:normal;}
+.soc{display:flex;gap:7px;}
+.sb2{width:33px;height:33px;border:1px solid rgba(255,255,255,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:rgba(255,255,255,.35);cursor:pointer;transition:all .2s;font-family:'Space Grotesk',sans-serif;font-weight:700;}
+.sb2:hover{border-color:var(--coral);color:var(--coral);}
+
+/* ═══════════════════════════
+   RESPONSIVE
+═══════════════════════════ */
+@media(max-width:1100px){
+  nav{padding:0 28px;}
+  .hero{padding:56px 28px;grid-template-columns:1fr;gap:52px;}
+  .sw{padding:64px 28px;}
+  .dark-grid{padding:64px 28px;grid-template-columns:1fr;gap:40px;}
+  .met-row{grid-template-columns:1fr 1fr;gap:0;}
+  .met{padding:20px;border-right:none;border-bottom:1px solid var(--g200);}
+  .met:nth-child(odd){border-right:1px solid var(--g200);}
+  .bento .s4{grid-column:span 6;}
+  .ind-grid,.cases-grid{grid-template-columns:1fr 1fr;}
+  .why-grid,.about-split,.contact-grid{grid-template-columns:1fr;gap:48px;}
+  .roi-box{position:static;}
+  .compare-grid{grid-template-columns:1fr 1fr;}
+  .spotlight-item{grid-template-columns:1fr;gap:36px;}
+  .spotlight-item.flip{direction:ltr;}
+  .foot-grid{grid-template-columns:1fr 1fr;gap:36px;}
+  .cta-band{padding:68px 28px;}
+  footer{padding:48px 28px 28px;}
+}
+@media(max-width:768px){
+  .nav-links,.btn-ghost{display:none;}
+  .ham{display:flex;}
+  .bento{grid-template-columns:1fr;}
+  .bento .s4,.bento .s6,.bento .s8{grid-column:span 1!important;}
+  .ind-grid,.cases-grid{grid-template-columns:1fr;}
+  .steps{grid-template-columns:1fr 1fr;}
+  .step-line{display:none;}
+  .compare-grid,.stats2,.avals{grid-template-columns:1fr 1fr;}
+  .frow{grid-template-columns:1fr;}
+  .foot-grid{grid-template-columns:1fr;gap:24px;}
+  .foot-bot{flex-direction:column;gap:14px;}
+  .tc{flex:0 0 280px;}
+  .met-row{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-r"></div>
+
+<!-- ══════════════════
+     NAVIGATION
+══════════════════ -->
+<nav id="mainNav">
+  <div class="nav-logo" onclick="go('home')">
+    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSIyMDAwIiBoZWlnaHQ9IjMyMiIgdmlld0JveD0iMCAwIDIwMDAgMzIyIj48c3ZnIHhtbDpzcGFjZT0icHJlc2VydmUiIHdpZHRoPSIyMDAwIiBoZWlnaHQ9IjMyMiIgZGF0YS12ZXJzaW9uPSIyIiBkYXRhLWlkPSJsZ180d3hmZzRySmxCNjdiRDA1M3EiIHZpZXdCb3g9IjAgMCA1NTMgODkiIHg9IjAiIHk9IjAiPgogICAgPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idHJhbnNwYXJlbnQiPjwvcmVjdD4KICAgIDxwYXRoIGQ9Ik02Mi41NiAyLjc2NWgxNS41OHY4Mi43Nkg0OS42MkwyMS4yNSA5LjM3NWgtLjI5djc2LjE1SDUuNTJWMi43NjVoMjYuNDZsMzAuMjkgNzYuMTVoLjI5WiIgcGFpbnQtb3JkZXI9InN0cm9rZSI+PC9wYXRoPgogICAgPHJlY3Qgd2lkdGg9IjcyLjYyIiBoZWlnaHQ9IjgyLjc2IiB4PSItMzYuMzEiIHk9Ii00MS4zOCIgZmlsbD0ibm9uZSIgcng9IjAiIHJ5PSIwIiB0cmFuc2Zvcm09Im1hdHJpeCgxIDAgMCAxIDQyLjMzIDQ0LjY0NSkiPjwvcmVjdD4KICAgIDxwYXRoIGQ9Ik0xMTcuMjQgODYuOTk1cS0xMC40MyAwLTE2Ljk3LTQuNDgtNi41NS00LjQ5LTkuNzEtMTEuNTQtMy4xNi03LjA2LTMuMy0xNC43LS4xNS05LjEyIDMuNDUtMTYuMjUgMy42LTcuMTMgMTAuMjktMTEuMTcgNi42OS00LjA0IDE1LjgtNC4wNCA4LjA5IDAgMTQuNTYgMy41MyA2LjQ2IDMuNTMgMTAuMjEgOS44NSAzLjc1IDYuMzIgMy45IDE1LjE0djMuODJoLTQzLjk2cTAgOC4zOCA0LjE5IDEyLjg2IDQuMTkgNC40OSAxMS4yNSA0LjQ5IDUuNTkgMCA5LjMzLTIuOCAzLjc1LTIuNzkgNC40OS03LjM1aDE0LjU1cS0uNTkgNi4zMi00LjEyIDExLjQ3LTMuNTIgNS4xNC05LjU1IDguMTYtNi4wMyAzLjAxLTE0LjQxIDMuMDFtLTE1LjI4LTM2LjZoMjguNTFxLS4xNC0xLjAzLS41OC0zLjI0LS40NS0yLjItMS45Mi00LjU1LTEuNDctMi4zNi00LjI2LTMuOTctMi43OS0xLjYyLTcuMi0xLjYydC03LjIgMS40N3EtMi44IDEuNDctNC4yNyAzLjY4LTEuNDcgMi4yLTIuMiA0LjQxLS43NCAyLjItLjg4IDMuODIiIHBhaW50LW9yZGVyPSJzdHJva2UiPjwvcGF0aD4KICAgIDxyZWN0IHdpZHRoPSI1OC4yNTciIGhlaWdodD0iNjIuMTgiIHg9Ii0yOS4xMjgiIHk9Ii0zMS4wOSIgZmlsbD0ibm9uZSIgcng9IjAiIHJ5PSIwIiB0cmFuc2Zvcm09Im1hdHJpeCgxIDAgMCAxIDExNi44NDIgNTYuNDA1KSI+PC9yZWN0PgogICAgPHBhdGggZD0ibTE0OC41NSA4NS41MjUgMjIuMDUtMzEuMTYtMjAuODctMjkuMjZoMTYuNDZsMTMuODIgMjAuNTggMTMuODItMjAuNThoMTYuNjFsLTIwLjg3IDI5LjI2IDIyLjE5IDMxLjE2SDE5NS4zbC0xNS4yOS0yMi4yLTE0Ljk5IDIyLjJaIiBwYWludC1vcmRlcj0ic3Ryb2tlIj48L3BhdGg+CiAgICA8cmVjdCB3aWR0aD0iNjMuMjEiIGhlaWdodD0iNjAuNDIiIHg9Ii0zMS42MDUiIHk9Ii0zMC4yMSIgZmlsbD0ibm9uZSIgcng9IjAiIHJ5PSIwIiB0cmFuc2Zvcm09Im1hdHJpeCgxIDAgMCAxIDE4MC42NTUgNTUuODE1KSI+PC9yZWN0PgogICAgPHBhdGggZD0iTTI0NC45OSA4Ni45OTVxLTEwIDAtMTYuODMtMy45Ny02Ljg0LTMuOTctMTAuMjItMTAuOTUtMy4zOC02Ljk4LTMuMzgtMTUuOTUgMC05LjExIDMuMzgtMTYuMSAzLjM4LTYuOTggMTAuMjItMTAuOTUgNi44My0zLjk3IDE2Ljk3LTMuOTcgMTQuODUgMCAyMi41NyA4LjUzIDcuNzIgOC41MyA3LjcyIDIyLjQ5IDAgOC42Ny0zLjI0IDE1LjczLTMuMjMgNy4wNi05Ljk5IDExLjEtNi43NyA0LjA0LTE3LjIgNC4wNG0wLTEyLjY0cTYuNjEgMCAxMC4wNy0yLjc5IDMuNDUtMi44IDQuNjMtNy4xMyAxLjE3LTQuMzQgMS4xNy04Ljc1IDAtNC43LTEuMTctOC45Ny0xLjE4LTQuMjYtNC42My03LjEzLTMuNDYtMi44Ni0xMC4wNy0yLjg2LTYuNDcgMC05LjkzIDIuODYtMy40NSAyLjg3LTQuNyA3LjEzLTEuMjUgNC4yNy0xLjI1IDguOTcgMCA0LjQxIDEuMjUgOC43NSAxLjI1IDQuMzMgNC43IDcuMTMgMy40NiAyLjc5IDkuOTMgMi43OSIgcGFpbnQtb3JkZXI9InN0cm9rZSI+PC9wYXRoPgogICAgPHJlY3Qgd2lkdGg9IjYwLjg2IiBoZWlnaHQ9IjYxLjg5IiB4PSItMzAuNDMiIHk9Ii0zMC45NDUiIGZpbGw9Im5vbmUiIHJ4PSIwIiByeT0iMCIgdHJhbnNmb3JtPSJtYXRyaXgoMSAwIDAgMSAyNDUuNDkgNTYuNTUpIj48L3JlY3Q+CiAgICA8cGF0aCBkPSJNMjgzLjc5IDg1LjUyNXYtNjAuNDJoMTMuOTdsMS4xOCAxNy42NC0uMTUgMTIuOTR2MjkuODRabTE1LTI2LjAyLS40NC0xMy4zOHEwLTMuMDggMS4xNy02LjY4IDEuMTgtMy42MSAzLjktNi44NCAyLjcyLTMuMjMgNy4xMy01LjM3IDQuNDEtMi4xMyAxMC44OC0yLjEzaDIuMnYxNi43NmgtMi4ycS02LjMyIDAtMTAuNzMuOTYtNC40MS45NS02Ljk5IDMuMDEtMi41NyAyLjA2LTMuNzUgNS40NC0xLjE3IDMuMzgtMS4xNyA4LjIzIiBwYWludC1vcmRlcj0ic3Ryb2tlIj48L3BhdGg+CiAgICA8cmVjdCB3aWR0aD0iMzkuODQiIGhlaWdodD0iNjAuNDIiIHg9Ii0xOS45MiIgeT0iLTMwLjIxIiBmaWxsPSJub25lIiByeD0iMCIgcnk9IjAiIHRyYW5zZm9ybT0ibWF0cml4KDEgMCAwIDEgMzA0LjIxIDU1LjgxNSkiPjwvcmVjdD4KICAgIDxwYXRoIGQ9Ik0zNTAuNTMgODYuOTk1cS04LjIzIDAtMTMuMzctMy45LTUuMTUtMy44OS03LjQzLTEwLjg3LTIuMjgtNi45OS0yLjI4LTE2LjEgMC05LjI2IDIuMzYtMTYuMzIgMi4zNS03LjA1IDcuNDItMTAuOTUgNS4wNy0zLjg5IDEzLjMtMy44OSA1LjI5IDAgOC45IDEuNDcgMy42IDEuNDcgNS44OCAzLjUyIDIuMjcgMi4wNiAzLjQ1IDQuMDUgMS4xOCAxLjk4IDEuNjIgMy4xNmguMjl2LTEyLjA2aDE1LjQ0djYwLjQyaC0xMi45NGwtMi41LTkuODVoLS4yOXEtLjMgMS4wMy0xLjYyIDIuODd0LTMuNiAzLjgycS0yLjI4IDEuOTgtNS44OCAzLjMxLTMuNiAxLjMyLTguNzUgMS4zMm02LjE4LTEyLjY0cTUuNDQgMCA4LjUyLTIuMzUgMy4wOS0yLjM2IDQuMjctNi41NSAxLjE3LTQuMTggMS4xNy05LjE4IDAtNS40NC0xLjI1LTkuNDgtMS4yNS00LjA1LTQuMjYtNi4zMy0zLjAxLTIuMjctOC40NS0yLjI3LTUuNzQgMC04LjkgMi41LTMuMTYgMi40OS00LjQxIDYuNTQtMS4yNSA0LjA0LTEuMjUgOS4wNCAwIDUgMS4yNSA5LjExIDEuMjUgNC4xMiA0LjQxIDYuNTQgMy4xNiAyLjQzIDguOSAyLjQzIiBwYWludC1vcmRlcj0ic3Ryb2tlIj48L3BhdGg+CiAgICA8cmVjdCB3aWR0aD0iNTguNjYiIGhlaWdodD0iNjIuMDMiIHg9Ii0yOS4zMyIgeT0iLTMxLjAxNSIgZmlsbD0ibm9uZSIgcng9IjAiIHJ5PSIwIiB0cmFuc2Zvcm09Im1hdHJpeCgxIDAgMCAxIDM1Ny4yOCA1Ni40OCkiPjwvcmVjdD4KICAgIDxwYXRoIGQ9Im00MTkuOTIgODUuNTI1IDI2LjQ2LTgyLjc2aDI0LjU1bDI3LjE5IDgyLjc2SDQ4Mi4xbC0yMy4yMy03Ni40NC0yMy4wOCA3Ni40NFptMTcuNzgtMjMuMzcuMTUtMTEuNjJoNDEuOWwuMTQgMTEuNjJaIiBwYWludC1vcmRlcj0ic3Ryb2tlIj48L3BhdGg+CiAgICA8cmVjdCB3aWR0aD0iNzguMiIgaGVpZ2h0PSI4Mi43NiIgeD0iLTM5LjEiIHk9Ii00MS4zOCIgZmlsbD0ibm9uZSIgcng9IjAiIHJ5PSIwIiB0cmFuc2Zvcm09Im1hdHJpeCgxIDAgMCAxIDQ1OS41MiA0NC42NDUpIj48L3JlY3Q+CiAgICA8cGF0aCBkPSJNNTA0LjU5IDg1LjUyNXYtNjAuNDJoMTQuOTl2NjAuNDJabTcuNS02OC4yMXEtNC44NiAwLTYuNTUtMi41LTEuNjktMi41LTEuNjktNS43MyAwLTMuMjMgMS42OS01LjY2IDEuNjktMi40MiA2LjU1LTIuNDIgNC45OSAwIDYuNTQgMi40MiAxLjU0IDIuNDMgMS41NCA1LjY2dC0xLjU0IDUuNzNxLTEuNTUgMi41LTYuNTQgMi41IiBwYWludC1vcmRlcj0ic3Ryb2tlIj48L3BhdGg+CiAgICA8cmVjdCB3aWR0aD0iMTYuMzIiIGhlaWdodD0iODQuNTIiIHg9Ii04LjE2IiB5PSItNDIuMjYiIGZpbGw9Im5vbmUiIHJ4PSIwIiByeT0iMCIgdHJhbnNmb3JtPSJtYXRyaXgoMSAwIDAgMSA1MTIuNTEgNDMuNzY1KSI+PC9yZWN0PgogICAgPHBhdGggZmlsbD0iI0ZGNDEzNiIgZD0iTTUzNy44MSA4NS41MjVxLTUuMjkgMC03LjEzLTIuNjUtMS44NC0yLjY0LTEuODQtNi40NiAwLTMuNTMgMS44NC02LjE4IDEuODQtMi42NCA3LjEzLTIuNjQgNSAwIDYuODQgMi42NCAxLjgzIDIuNjUgMS44MyA2LjE4IDAgMy44Mi0xLjgzIDYuNDYtMS44NCAyLjY1LTYuODQgMi42NSIgcGFpbnQtb3JkZXI9InN0cm9rZSI+PC9wYXRoPgogICAgPHJlY3Qgd2lkdGg9IjE3LjY0IiBoZWlnaHQ9IjE3LjkzIiB4PSItOC44MiIgeT0iLTguOTY1IiBmaWxsPSJub25lIiByeD0iMCIgcnk9IjAiIHRyYW5zZm9ybT0ibWF0cml4KDEgMCAwIDEgNTM4LjE2IDc3LjA2KSI+PC9yZWN0Pgo8L3N2Zz48L3N2Zz4=" alt="Nexora Ai.">
+  </div>
+
+  <div class="nav-links">
+    <a onclick="go('home')" id="nl-home">Home</a>
+    <a onclick="go('services')" id="nl-services">Services</a>
+    <a onclick="go('why')" id="nl-why">Why AI?</a>
+    <a onclick="go('industries')" id="nl-industries">Industries</a>
+    <a onclick="go('cases')" id="nl-cases">Case Studies</a>
+    <a onclick="go('about')" id="nl-about">About</a>
+    <a onclick="go('faq')" id="nl-faq">FAQ</a>
+  </div>
+
+  <div class="nav-r">
+    <button class="btn-ghost" onclick="go('contact')">Contact</button>
+    <button class="btn-fill" onclick="go('contact')">Get Started →</button>
+    <div class="ham" id="ham" onclick="toggleMob()"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<div class="mob" id="mob">
+  <a onclick="navTo('home')">Home</a>
+  <a onclick="navTo('services')">Services</a>
+  <a onclick="navTo('why')">Why AI?</a>
+  <a onclick="navTo('industries')">Industries</a>
+  <a onclick="navTo('cases')">Case Studies</a>
+  <a onclick="navTo('about')">About</a>
+  <a onclick="navTo('faq')">FAQ</a>
+  <a onclick="navTo('contact')">Contact</a>
+</div>
+
+
+<!-- ══════════════════════════════════
+     HOME PAGE
+══════════════════════════════════ -->
+<div id="page-home" class="page active">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-left">
+      <div class="eyebrow"><span class="eyebrow-dot"></span>AI automation platform for SMEs</div>
+      <h1 class="h1">Your business,<br><span class="h1-accent">running on autopilot.</span></h1>
+      <p class="hero-p">Nexora Ai builds intelligent automation for clinics, real estate firms, and growing businesses. Save hours daily, generate more leads, and scale without hiring.</p>
+      <div class="hero-btns">
+        <button class="btn-p" onclick="go('contact')"><span>Book Free Discovery Call</span><span class="arr">→</span></button>
+        <button class="btn-o" onclick="go('services')">Explore Services</button>
+      </div>
+      <div class="hero-trust">
+        <div class="avas">
+          <div class="ava">DR</div><div class="ava">JM</div><div class="ava">SF</div>
+          <div class="ava" style="background:var(--coral);font-size:9px;">+97</div>
+        </div>
+        <p class="trust-t"><strong>100+ businesses</strong> already automated</p>
+      </div>
+    </div>
+
+    <!-- WORKFLOW VISUAL — replaces canvas -->
+    <div class="hero-right">
+      <div style="position:relative;">
+        <div class="workflow-card">
+          <div class="wf-header">
+            <div class="wf-title">Nexora Ai — Live Automation Dashboard</div>
+            <div class="wf-live"><span class="wf-live-dot"></span>3 agents running</div>
+          </div>
+          <div class="wf-body">
+            <div class="flow-steps">
+              <div class="flow-step">
+                <div class="fs-icon">🔔</div>
+                <div class="fs-info">
+                  <div class="fs-label">New lead captured — PropEdge</div>
+                  <div class="fs-sub">Website form → CRM synced automatically</div>
+                </div>
+                <span class="fs-badge badge-green">Done</span>
+              </div>
+              <div class="flow-step">
+                <div class="fs-icon">🤖</div>
+                <div class="fs-info">
+                  <div class="fs-label">AI replied in 47 seconds</div>
+                  <div class="fs-sub">Personalised email + WhatsApp sent</div>
+                </div>
+                <span class="fs-badge badge-green">Done</span>
+              </div>
+              <div class="flow-step">
+                <div class="fs-icon">📅</div>
+                <div class="fs-info">
+                  <div class="fs-label">Viewing scheduled for Thursday</div>
+                  <div class="fs-sub">Calendar booked, reminder set for client</div>
+                </div>
+                <span class="fs-badge badge-blue">Active</span>
+              </div>
+              <div class="flow-step">
+                <div class="fs-icon">⭐</div>
+                <div class="fs-info">
+                  <div class="fs-label">Review request queued</div>
+                  <div class="fs-sub">Auto-sends 24h after viewing</div>
+                </div>
+                <span class="fs-badge badge-amber">Queued</span>
+              </div>
+            </div>
+            <div class="wf-metrics">
+              <div class="wm"><div class="wm-v">342<span>↑</span></div><div class="wm-l">Leads today</div><div class="wm-chg">↑ 18%</div></div>
+              <div class="wm"><div class="wm-v">62<span>h</span></div><div class="wm-l">Hours saved</div><div class="wm-chg">This month</div></div>
+              <div class="wm"><div class="wm-v">100<span>%</span></div><div class="wm-l">Response rate</div><div class="wm-chg">24/7 active</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fl-badge fb1"><span class="fl-ic">⚡</span><div><div class="fl-v">62h</div><div class="fl-l">Saved / month</div></div></div>
+        <div class="fl-badge fb2"><span class="fl-ic">📈</span><div><div class="fl-v">3.4×</div><div class="fl-l">More leads</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="tl">Trusted by forward-thinking businesses</div>
+    <div class="ticker-row">
+      <span class="tk">MediCare Clinics<span class="tks"></span></span>
+      <span class="tk">PropEdge Realty<span class="tks"></span></span>
+      <span class="tk">SwiftLaw Partners<span class="tks"></span></span>
+      <span class="tk">UrbanDine Group<span class="tks"></span></span>
+      <span class="tk">NovaTech SME<span class="tks"></span></span>
+      <span class="tk">PureHealth Medical<span class="tks"></span></span>
+      <span class="tk">LandMark Estates<span class="tks"></span></span>
+      <span class="tk">FinEdge Advisory<span class="tks"></span></span>
+      <span class="tk">RetailPro Chain<span class="tks"></span></span>
+      <span class="tk">AlphaFit Studios<span class="tks"></span></span>
+      <span class="tk">MediCare Clinics<span class="tks"></span></span>
+      <span class="tk">PropEdge Realty<span class="tks"></span></span>
+      <span class="tk">SwiftLaw Partners<span class="tks"></span></span>
+      <span class="tk">UrbanDine Group<span class="tks"></span></span>
+      <span class="tk">NovaTech SME<span class="tks"></span></span>
+      <span class="tk">PureHealth Medical<span class="tks"></span></span>
+      <span class="tk">LandMark Estates<span class="tks"></span></span>
+      <span class="tk">FinEdge Advisory<span class="tks"></span></span>
+      <span class="tk">RetailPro Chain<span class="tks"></span></span>
+      <span class="tk">AlphaFit Studios<span class="tks"></span></span>
+    </div>
+  </div>
+
+  <!-- METRICS -->
+  <div class="met-band">
+    <div class="met-row">
+      <div class="met rv"><div class="met-n">100<em>+</em></div><div class="met-l">Businesses automated</div></div>
+      <div class="met rv d1"><div class="met-n">2M<em>+</em></div><div class="met-l">Hours saved for clients</div></div>
+      <div class="met rv d2"><div class="met-n">94<em>%</em></div><div class="met-l">Client retention rate</div></div>
+      <div class="met rv d3"><div class="met-n">3.4<em>×</em></div><div class="met-l">Average lead increase</div></div>
+    </div>
+  </div>
+
+  <!-- BEFORE / AFTER COMPARISON -->
+  <div class="sw">
+    <div class="sh rv" style="max-width:620px;">
+      <div class="lbl">The difference</div>
+      <h2 class="h2">Your business,<br>before and <span style="color:var(--coral)">after AI.</span></h2>
+      <p class="sp">Most SMEs spend 40–60% of their week on tasks that AI can handle in seconds. Here's what changes.</p>
+    </div>
+    <div class="compare-grid rv">
+      <div class="compare-col">
+        <div class="compare-head compare-head-before">
+          <span style="font-size:18px;">😩</span>
+          <span class="ch-badge before">Before Nexora Ai</span>
+        </div>
+        <div class="compare-items">
+          <div class="ci"><span class="ci-icon">❌</span><span>Staff manually booking appointments all day</span></div>
+          <div class="ci"><span class="ci-icon">❌</span><span>Leads waiting <strong>hours</strong> for a reply — going cold</span></div>
+          <div class="ci"><span class="ci-icon">❌</span><span>Social media irregular or non-existent</span></div>
+          <div class="ci"><span class="ci-icon">❌</span><span>Follow-ups falling through the cracks</span></div>
+          <div class="ci"><span class="ci-icon">❌</span><span>No-shows with no reminders sent</span></div>
+          <div class="ci"><span class="ci-icon">❌</span><span>Team buried in admin instead of revenue work</span></div>
+        </div>
+      </div>
+      <div class="compare-col">
+        <div class="compare-head compare-head-after">
+          <span style="font-size:18px;">🚀</span>
+          <span class="ch-badge after">After Nexora Ai</span>
+        </div>
+        <div class="compare-items">
+          <div class="ci"><span class="ci-icon">✅</span><span>AI books appointments <strong>24/7</strong>, zero staff effort</span></div>
+          <div class="ci"><span class="ci-icon">✅</span><span>Every lead gets a personalised reply in <strong>&lt;2 minutes</strong></span></div>
+          <div class="ci"><span class="ci-icon">✅</span><span>Consistent content posted daily on all platforms</span></div>
+          <div class="ci"><span class="ci-icon">✅</span><span>Every follow-up automated — nothing missed</span></div>
+          <div class="ci"><span class="ci-icon">✅</span><span>No-shows <strong>cut by 40%</strong> with smart reminders</span></div>
+          <div class="ci"><span class="ci-icon">✅</span><span>Team focused on <strong>growth</strong>, not admin</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTOMATION DARK SECTION -->
+  <div class="dark-band">
+    <div class="dark-grid">
+      <div class="rv">
+        <div class="lbl" style="color:rgba(255,87,51,.9);">What we automate</div>
+        <h2 style="font-family:'Space Grotesk',sans-serif;font-size:clamp(30px,3.8vw,48px);font-weight:700;color:#fff;line-height:1.08;letter-spacing:-.04em;margin-bottom:14px;">From idea to <em style="font-style:normal;color:var(--coral);">automated</em><br>in days, not months.</h2>
+        <p style="font-size:16px;color:rgba(255,255,255,.5);line-height:1.8;margin-bottom:32px;">We deploy intelligent systems that handle your most time-consuming tasks — so your team can focus entirely on growth.</p>
+        <button class="btn-w" onclick="go('services')"><span>See all services</span><span class="arr">→</span></button>
+      </div>
+      <div class="ar-list rv d2">
+        <div class="ar"><div class="ar-ic">🤖</div><div><div class="ar-title">AI Booking & Scheduling Agent</div><div class="ar-sub">Handles appointments, reminders & rescheduling 24/7</div></div><div class="ar-dot"></div></div>
+        <div class="ar"><div class="ar-ic">📊</div><div><div class="ar-title">Lead Qualification & CRM Sync</div><div class="ar-sub">Scores, nurtures and routes leads automatically</div></div><div class="ar-dot"></div></div>
+        <div class="ar"><div class="ar-ic">📱</div><div><div class="ar-title">Social Media Content Engine</div><div class="ar-sub">AI-written posts auto-scheduled across all platforms</div></div><div class="ar-dot"></div></div>
+        <div class="ar"><div class="ar-ic">⭐</div><div><div class="ar-title">Review Collection & Response AI</div><div class="ar-sub">Auto-requests reviews, responds intelligently</div></div><div class="ar-dot"></div></div>
+        <div class="ar"><div class="ar-ic">📧</div><div><div class="ar-title">Email & Follow-Up Sequences</div><div class="ar-sub">Personalised nurture flows triggered by behaviour</div></div><div class="ar-dot"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURE SPOTLIGHTS — Cohere style alternating -->
+  <div class="sw">
+    <div class="sh rv">
+      <div class="lbl">Features in depth</div>
+      <h2 class="h2">Everything your business<br>needs to <span style="color:var(--coral)">automate.</span></h2>
+    </div>
+
+    <div class="spotlight-list">
+      <!-- 1 -->
+      <div class="spotlight-item rv">
+        <div>
+          <div class="spot-num">01 — Lead Generation</div>
+          <h3 class="spot-h">Never miss a lead again.</h3>
+          <p class="spot-p">Every enquiry gets an intelligent, personalised response in under 2 minutes — at any hour of the day. Our AI qualifies, scores, and routes leads straight to your CRM so your team only talks to people ready to buy.</p>
+          <ul class="spot-ul">
+            <li>Instant AI response to every form, email and message</li>
+            <li>Automatic lead scoring and qualification</li>
+            <li>CRM sync with HubSpot, Salesforce, Zoho and more</li>
+            <li>Behaviour-triggered nurture email sequences</li>
+          </ul>
+        </div>
+        <div class="spot-vis">
+          <div class="chart-vis">
+            <div class="chart-title">Lead response speed comparison</div>
+            <div class="chart-sub">Average time to first response (minutes)</div>
+            <div class="bar-chart" id="leadChart"></div>
+            <div class="chart-legend">
+              <div class="cl"><div class="cl-dot" style="background:var(--coral);"></div>With Nexora Ai</div>
+              <div class="cl"><div class="cl-dot" style="background:var(--g200);"></div>Industry average</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="spotlight-item flip rv">
+        <div>
+          <div class="spot-num">02 — AI Agents</div>
+          <h3 class="spot-h">Your best employee, working 24/7.</h3>
+          <p class="spot-p">Custom AI agents handle bookings, answer questions, follow up on enquiries, and manage internal workflows — without breaks, without sick days, and without errors.</p>
+          <ul class="spot-ul">
+            <li>Custom-trained on your business and knowledge base</li>
+            <li>Available via website chat, WhatsApp, SMS and voice</li>
+            <li>Handles bookings, FAQs, complaints and escalations</li>
+            <li>Seamlessly hands off to human agents when needed</li>
+          </ul>
+        </div>
+        <div class="spot-vis">
+          <div class="agent-visual">
+            <div class="av-header">
+              <span>Agent Activity — Live</span>
+              <span class="av-live"><span class="av-live-dot"></span>Online</span>
+            </div>
+            <div class="activity-feed">
+              <div class="af-row"><span class="af-ic">📨</span><span class="af-text">Replied to Sarah M. — property enquiry</span><span class="af-time">Just now</span></div>
+              <div class="af-row"><span class="af-ic">📅</span><span class="af-text">Booked viewing — 14 Oak Lane, Thu 2pm</span><span class="af-time">2m ago</span></div>
+              <div class="af-row"><span class="af-ic">⭐</span><span class="af-text">Sent review request to Dr. Ahmed post-visit</span><span class="af-time">8m ago</span></div>
+              <div class="af-row"><span class="af-ic">🔔</span><span class="af-text">Reminder sent — tomorrow's 9am appointment</span><span class="af-time">12m ago</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="spotlight-item rv">
+        <div>
+          <div class="spot-num">03 — Social Media AI</div>
+          <h3 class="spot-h">Consistent presence. Zero effort.</h3>
+          <p class="spot-p">Our AI generates on-brand content, schedules it across all your platforms, responds to comments, and tracks what's working — so your social media grows on autopilot.</p>
+          <ul class="spot-ul">
+            <li>AI-written posts tailored to your brand voice</li>
+            <li>Auto-scheduled across Instagram, LinkedIn, TikTok and more</li>
+            <li>Smart reply suggestions for comments and DMs</li>
+            <li>Monthly performance reports and content calendar</li>
+          </ul>
+        </div>
+        <div class="spot-vis">
+          <div class="social-vis">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;letter-spacing:-.02em;">Social reach growth</div>
+            <div style="font-size:12px;color:var(--g400);margin-bottom:16px;">Month-on-month with Nexora Ai</div>
+            <div class="social-platform">
+              <span style="font-size:18px;">📸</span>
+              <div class="sp-name">Instagram</div>
+              <div class="sp-bar-track"><div class="sp-bar-fill" style="width:85%;background:linear-gradient(90deg,#E1306C,#F77737);"></div></div>
+              <div class="sp-val">+156%</div>
+            </div>
+            <div class="social-platform">
+              <span style="font-size:18px;">💼</span>
+              <div class="sp-name">LinkedIn</div>
+              <div class="sp-bar-track"><div class="sp-bar-fill" style="width:70%;background:linear-gradient(90deg,#0077B5,#00A0DC);"></div></div>
+              <div class="sp-val">+94%</div>
+            </div>
+            <div class="social-platform">
+              <span style="font-size:18px;">🎵</span>
+              <div class="sp-name">TikTok</div>
+              <div class="sp-bar-track"><div class="sp-bar-fill" style="width:90%;background:linear-gradient(90deg,#010101,#69C9D0);"></div></div>
+              <div class="sp-val">+210%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="process-bg">
+    <div class="sw">
+      <div class="sh rv">
+        <div class="lbl">How it works</div>
+        <h2 class="h2">Live in <span style="color:var(--coral)">4 steps</span></h2>
+        <p class="sp">From your first call to live AI agents — fast, simple, zero disruption to your team.</p>
+      </div>
+      <div class="steps">
+        <div class="step-line"></div>
+        <div class="step rv d1"><div class="step-n">01</div><h4>Discovery Call</h4><p>Free 30-min session to map your workflows and find your best automation opportunities.</p></div>
+        <div class="step rv d2"><div class="step-n">02</div><h4>AI Blueprint</h4><p>We design a tailored strategy of agents and workflows built specifically for your industry.</p></div>
+        <div class="step rv d3"><div class="step-n">03</div><h4>Build & Deploy</h4><p>Our team builds everything and integrates it into your existing tools — no disruption at all.</p></div>
+        <div class="step rv d4"><div class="step-n">04</div><h4>Scale & Grow</h4><p>Ongoing monitoring, optimisation, and new automations as your business grows.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS -->
+  <div class="sw">
+    <div class="sh rv">
+      <div class="lbl">Testimonials</div>
+      <h2 class="h2">What our clients say</h2>
+      <p class="sp">Real results from real businesses — every word is genuine.</p>
+    </div>
+    <div class="testi-row">
+      <div class="tc"><div class="tq">"</div><p class="tt">Nexora Ai transformed our patient bookings. No-shows dropped 40% and admin time was cut in half. Absolutely game-changing for the clinic.</p><div class="ta"><div class="tava">DK</div><div><div class="tn">Dr. Rania Khalil</div><div class="tr">Director, PureHealth Medical</div></div></div></div>
+      <div class="tc"><div class="tq">"</div><p class="tt">Lead automation tripled our inbound in 6 weeks. Agents spend time closing, not chasing. Best investment our agency has ever made.</p><div class="ta"><div class="tava">JM</div><div><div class="tn">James Morrow</div><div class="tr">CEO, LandMark Estates</div></div></div></div>
+      <div class="tc"><div class="tq">"</div><p class="tt">Our social runs on autopilot — consistent content, automated replies, real engagement growth. Saved 20+ hours a week across the team.</p><div class="ta"><div class="tava">SF</div><div><div class="tn">Sofia Fernandez</div><div class="tr">Marketing Head, UrbanDine</div></div></div></div>
+      <div class="tc"><div class="tq">"</div><p class="tt">Intake that used to take days now takes minutes. Every follow-up is automated and nothing falls through the cracks anymore.</p><div class="ta"><div class="tava">TL</div><div><div class="tn">Tom Larkin</div><div class="tr">Partner, SwiftLaw Firm</div></div></div></div>
+      <div class="tc"><div class="tq">"</div><p class="tt">ROI was visible in 30 days. Sales pipeline grew 2.8× and cost per lead dropped 50%. Nexora Ai paid for itself many times over.</p><div class="ta"><div class="tava">AC</div><div><div class="tn">Aisha Collins</div><div class="tr">Founder, NovaTech SME</div></div></div></div>
+    </div>
+  </div>
+
+  <div class="cta-band rv">
+    <div class="cta-in">
+      <h2>Ready to run your business<br>on <em>autopilot?</em></h2>
+      <p>Join 100+ businesses saving time, cutting costs, and growing revenue with Nexora Ai.</p>
+      <button class="btn-w" onclick="go('contact')"><span>Book Free Discovery Call</span><span class="arr">→</span></button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="foot-in">
+      <div class="foot-grid">
+        <div>
+          <div class="foot-logo">Nexora Ai<span class="foot-logo-dot"></span></div>
+          <p class="foot-desc">Intelligent automation for clinics, real estate, and modern SMEs. We make AI simple, practical, and profitable.</p>
+        </div>
+        <div class="foot-col"><h5>Services</h5><ul><li><a onclick="go('services')">AI Agents</a></li><li><a onclick="go('services')">Lead Automation</a></li><li><a onclick="go('services')">Social Media AI</a></li><li><a onclick="go('services')">Website Renewal</a></li><li><a onclick="go('services')">Custom AI Tools</a></li></ul></div>
+        <div class="foot-col"><h5>Industries</h5><ul><li><a onclick="go('industries')">Healthcare</a></li><li><a onclick="go('industries')">Real Estate</a></li><li><a onclick="go('industries')">Legal</a></li><li><a onclick="go('industries')">Restaurants</a></li><li><a onclick="go('industries')">Retail & SME</a></li></ul></div>
+        <div class="foot-col"><h5>Company</h5><ul><li><a onclick="go('about')">About</a></li><li><a onclick="go('cases')">Case Studies</a></li><li><a onclick="go('why')">Why AI?</a></li><li><a onclick="go('faq')">FAQ</a></li><li><a onclick="go('contact')">Contact</a></li></ul></div>
+      </div>
+      <div class="foot-bot">
+        <p class="foot-copy">© 2025 Nexora Ai<em>.</em> All rights reserved.</p>
+        <div class="soc"><a class="sb2">in</a><a class="sb2">𝕏</a><a class="sb2">▶</a><a class="sb2">ig</a></div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+
+<!-- SERVICES PAGE -->
+<div id="page-services" class="page">
+  <div class="sw">
+    <div class="sh rv"><div class="lbl">What we build</div><h1 class="h2">AI services that drive<br><span style="color:var(--coral)">real outcomes</span></h1><p class="sp">Every service is designed to save hours, generate revenue, and give your team room to breathe.</p></div>
+    <div class="bento">
+      <div class="bc dark s6 rv d1"><div class="bi">🤖</div><h3>AI Agents</h3><p>Custom intelligent assistants that handle bookings, queries, follow-ups, and internal tasks around the clock — completely hands-free.</p><div class="bc-tags"><span class="tg">GPT-4o</span><span class="tg">24/7</span><span class="tg">Multilingual</span><span class="tg">Voice</span></div></div>
+      <div class="bc s6 rv d2"><div class="bi">📈</div><h3>Lead Generation & Nurture</h3><p>Automated capture, AI scoring, and behaviour-triggered nurture sequences so your team only speaks to warm, qualified prospects.</p><div class="bc-tags"><span class="tg">CRM Sync</span><span class="tg">Auto-Qualify</span><span class="tg">Multi-channel</span></div></div>
+      <div class="bc s4 rv d1"><div class="bi">📱</div><h3>Social Media AI</h3><p>AI-generated content, scheduled posting, and smart replies across Instagram, LinkedIn, TikTok and more.</p><div class="bc-tags"><span class="tg">Instagram</span><span class="tg">LinkedIn</span><span class="tg">TikTok</span></div></div>
+      <div class="bc s4 rv d2"><div class="bi">🌐</div><h3>Website Renewal</h3><p>High-converting, AI-powered website with modern design, speed, and smart lead capture built in from day one.</p><div class="bc-tags"><span class="tg">UX-First</span><span class="tg">SEO</span><span class="tg">AI Chat</span></div></div>
+      <div class="bc s4 rv d3"><div class="bi">⚙️</div><h3>Process Automation</h3><p>Eliminate repetitive tasks across invoicing, scheduling, reporting, and email with intelligent workflows.</p><div class="bc-tags"><span class="tg">Make.com</span><span class="tg">n8n</span><span class="tg">Zapier</span></div></div>
+      <div class="bc s8 rv d1" style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center;"><div><div class="bi">🛠️</div><h3>Custom AI Tools</h3><p>Bespoke AI apps built for your specific needs — document processors, internal dashboards, assistants and more.</p><div class="bc-tags"><span class="tg">API Integration</span><span class="tg">Custom Build</span><span class="tg">Scalable</span></div></div><div style="background:var(--g50);border-radius:14px;padding:20px;border:1px solid var(--g100);"><div style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:var(--g400);margin-bottom:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;">Tech Stack</div><div style="display:flex;flex-wrap:wrap;gap:7px;"><span style="background:#fff;border:1px solid var(--g100);padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;color:var(--ink);">OpenAI GPT-4o</span><span style="background:#fff;border:1px solid var(--g100);padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;color:var(--ink);">Claude AI</span><span style="background:#fff;border:1px solid var(--g100);padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;color:var(--ink);">HubSpot</span><span style="background:#fff;border:1px solid var(--g100);padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;color:var(--ink);">Twilio</span><span style="background:#fff;border:1px solid var(--g100);padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;color:var(--ink);">Make.com</span><span style="background:#fff;border:1px solid var(--g100);padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;color:var(--ink);">n8n</span></div></div></div>
+      <div class="bc s4 rv d2"><div class="bi">⭐</div><h3>Reputation AI</h3><p>Auto-request reviews and respond intelligently to feedback to build your 5-star presence automatically.</p><div class="bc-tags"><span class="tg">Google</span><span class="tg">Trustpilot</span><span class="tg">Auto-Reply</span></div></div>
+    </div>
+  </div>
+  <div class="cta-band rv"><div class="cta-in"><h2>Not sure what you need?<br><em>Let's figure it out.</em></h2><p>Book a free 30-minute session — no commitment required.</p><button class="btn-w" onclick="go('contact')"><span>Book Free Consultation</span><span class="arr">→</span></button></div></div>
+  <footer><div class="foot-in"><div class="foot-bot" style="padding-top:0;border-top:none;"><p class="foot-copy">© 2025 Nexora Ai<em>.</em></p><div class="soc"><a class="sb2">in</a><a class="sb2">𝕏</a></div></div></div></footer>
+</div>
+
+
+<!-- WHY AI PAGE -->
+<div id="page-why" class="page">
+  <div class="sw">
+    <div class="sh rv" style="max-width:660px;"><div class="lbl">Why AI automation?</div><h1 class="h2">The businesses winning<br>right now are <span style="color:var(--coral)">automating.</span></h1><p class="sp">AI isn't the future — it's the present. Here's what it means for your bottom line, and what happens if you wait.</p></div>
+    <div class="why-grid">
+      <div>
+        <div class="wi-list">
+          <div class="wi rv d1"><div class="wi-ic">⏰</div><div><div class="wi-t">Save 20–60 hours per month</div><div class="wi-d">Automate scheduling, follow-ups, data entry, reporting, and content creation so your team focuses on what actually matters.</div></div></div>
+          <div class="wi rv d2"><div class="wi-ic">📊</div><div><div class="wi-t">3–5× more leads, same team</div><div class="wi-d">AI responds to every enquiry in under 2 minutes, 24/7 — capturing leads that would otherwise go to faster competitors.</div></div></div>
+          <div class="wi rv d3"><div class="wi-ic">💰</div><div><div class="wi-t">Cut operational costs 30–50%</div><div class="wi-d">Replace manual processes with intelligent workflows that cost a fraction of an employee and never call in sick.</div></div></div>
+          <div class="wi rv d4"><div class="wi-ic">🏆</div><div><div class="wi-t">Outpace competitors right now</div><div class="wi-d">Most competitors haven't automated yet. Moving now gives you a compounding advantage that's hard to close later.</div></div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:24px;" class="rv d5">
+          <div style="background:#fff;border:1px solid var(--g100);border-radius:14px;padding:22px;text-align:center;"><div style="font-family:'Space Grotesk',sans-serif;font-size:38px;font-weight:700;color:var(--coral);letter-spacing:-.05em;">&lt;2m</div><div style="font-size:13px;color:var(--g600);margin-top:4px;">AI response time<br>to every new lead</div></div>
+          <div style="background:#fff;border:1px solid var(--g100);border-radius:14px;padding:22px;text-align:center;"><div style="font-family:'Space Grotesk',sans-serif;font-size:38px;font-weight:700;color:var(--coral);letter-spacing:-.05em;">30d</div><div style="font-size:13px;color:var(--g600);margin-top:4px;">Average time to<br>measurable ROI</div></div>
+        </div>
+      </div>
+      <div class="roi-box rv d2">
+        <div class="roi-head">💡 ROI Calculator — Your Estimated Savings</div>
+        <div class="roi-sl"><div class="roi-lr"><span>Team size</span><span class="rv" id="rv-team">10 people</span></div><input type="range" min="2" max="50" value="10" oninput="calcROI()" id="sl-t"></div>
+        <div class="roi-sl"><div class="roi-lr"><span>Manual hours / week</span><span class="rv" id="rv-hrs">20 hours</span></div><input type="range" min="5" max="60" value="20" oninput="calcROI()" id="sl-h"></div>
+        <div class="roi-sl"><div class="roi-lr"><span>Hourly cost (£)</span><span class="rv" id="rv-rate">£25/hr</span></div><input type="range" min="10" max="100" value="25" oninput="calcROI()" id="sl-r"></div>
+        <div class="roi-res">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.28);margin-bottom:8px;">Estimated monthly savings</div>
+          <div class="roi-big" id="roi-out">£10,000</div>
+          <div class="roi-sub">Based on 65% automation efficiency</div>
+          <button class="btn-teal" onclick="go('contact')"><span>Get My Free Audit</span><span>→</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="cta-band rv"><div class="cta-in"><h2>See your ROI <em>live.</em></h2><p>Book a free audit — we'll show you exactly what AI can unlock for your business.</p><button class="btn-w" onclick="go('contact')"><span>Get Free AI Audit</span><span class="arr">→</span></button></div></div>
+  <footer><div class="foot-in"><div class="foot-bot" style="padding-top:0;border-top:none;"><p class="foot-copy">© 2025 Nexora Ai<em>.</em></p><div class="soc"><a class="sb2">in</a><a class="sb2">𝕏</a></div></div></div></footer>
+</div>
+
+
+<!-- INDUSTRIES PAGE -->
+<div id="page-industries" class="page">
+  <div class="sw">
+    <div class="sh rv"><div class="lbl">Industries we serve</div><h1 class="h2">Built for your<br><span style="color:var(--coral)">specific business</span></h1><p class="sp">Never generic. Every solution is shaped around your workflows, regulations, and growth goals.</p></div>
+    <div class="ind-grid">
+      <div class="ic rv d1" data-em="🏥"><span class="ic-em">🏥</span><h3>Healthcare & Clinics</h3><p>Reduce admin and improve patient experience with automation built for medical practices.</p><ul class="ic-ul"><li>AI appointment booking & SMS reminders</li><li>Automated patient follow-ups</li><li>Intelligent triage chatbots</li><li>Post-visit review collection</li><li>GDPR-compliant workflows</li></ul></div>
+      <div class="ic rv d2" data-em="🏢"><span class="ic-em">🏢</span><h3>Real Estate</h3><p>Give agents a 24/7 AI assistant that qualifies leads, books viewings, and follows up on autopilot.</p><ul class="ic-ul"><li>AI property matching chatbot</li><li>Lead nurturing & CRM sync</li><li>Virtual viewing scheduling</li><li>Social media content automation</li><li>Smart email drip campaigns</li></ul></div>
+      <div class="ic rv d3" data-em="⚖️"><span class="ic-em">⚖️</span><h3>Legal Firms</h3><p>Streamline intake, eliminate manual chasing, improve response times without extra headcount.</p><ul class="ic-ul"><li>Client intake & qualification bots</li><li>Document request automation</li><li>AI FAQ assistants</li><li>Deadline reminders</li><li>Secure communication flows</li></ul></div>
+      <div class="ic rv d1" data-em="🍽️"><span class="ic-em">🍽️</span><h3>Restaurants & Hospitality</h3><p>AI handles the busywork so your team delivers exceptional experiences every time.</p><ul class="ic-ul"><li>AI reservation & table management</li><li>Automated review responses</li><li>Loyalty programme automation</li><li>Social content scheduling</li><li>Promotions & upsell chatbot</li></ul></div>
+      <div class="ic rv d2" data-em="🛍️"><span class="ic-em">🛍️</span><h3>Retail & E-Commerce</h3><p>Drive more sales with AI that personalises experiences, handles queries, and recovers carts.</p><ul class="ic-ul"><li>AI product recommendations</li><li>Abandoned cart recovery</li><li>Customer service chatbot</li><li>Inventory & restock alerts</li><li>Loyalty & upsell campaigns</li></ul></div>
+      <div class="ic rv d3" data-em="💼"><span class="ic-em">💼</span><h3>Professional Services</h3><p>Serve more clients with the same team — without the burnout.</p><ul class="ic-ul"><li>Client onboarding automation</li><li>Invoice & payment follow-up</li><li>AI reporting dashboards</li><li>Email & calendar automations</li><li>Lead nurture sequences</li></ul></div>
+    </div>
+  </div>
+  <div class="cta-band rv"><div class="cta-in"><h2>Don't see your industry?<br><em>We've got you.</em></h2><p>We've automated fitness studios, financial advisors, schools and more. Get in touch.</p><button class="btn-w" onclick="go('contact')"><span>Talk to an Expert</span><span class="arr">→</span></button></div></div>
+  <footer><div class="foot-in"><div class="foot-bot" style="padding-top:0;border-top:none;"><p class="foot-copy">© 2025 Nexora Ai<em>.</em></p><div class="soc"><a class="sb2">in</a><a class="sb2">𝕏</a></div></div></div></footer>
+</div>
+
+
+<!-- CASES PAGE -->
+<div id="page-cases" class="page">
+  <div class="sw">
+    <div class="sh rv"><div class="lbl">Case studies</div><h1 class="h2">Real results.<br><span style="color:var(--coral)">Real businesses.</span></h1><p class="sp">Every number below comes from a real client. We measure everything.</p></div>
+    <div class="cases-grid">
+      <div class="case rv d1"><div class="case-hd"><div class="case-co">PureHealth Medical</div><div class="case-in">🏥 Healthcare · Clinic Chain</div></div><div class="case-bd"><div class="cs-row"><div class="cs"><div class="cs-v">-40%</div><div class="cs-l">No-shows</div></div><div class="cs"><div class="cs-v">18h</div><div class="cs-l">Saved/wk</div></div><div class="cs"><div class="cs-v">+220%</div><div class="cs-l">Reviews</div></div></div><p class="case-desc">Deployed AI appointment booking, automated SMS reminders, and post-visit review collection across 3 clinic locations.</p></div></div>
+      <div class="case rv d2"><div class="case-hd" style="background:#EEF3FF;"><div class="case-co">LandMark Estates</div><div class="case-in">🏢 Real Estate · Agency</div></div><div class="case-bd"><div class="cs-row"><div class="cs"><div class="cs-v">3.4×</div><div class="cs-l">More leads</div></div><div class="cs"><div class="cs-v">£48k</div><div class="cs-l">Extra rev.</div></div><div class="cs"><div class="cs-v">24/7</div><div class="cs-l">AI active</div></div></div><p class="case-desc">Property matching chatbot, CRM integration, and automated viewing scheduler running around the clock.</p></div></div>
+      <div class="case rv d3"><div class="case-hd" style="background:#FFF3EC;"><div class="case-co">UrbanDine Group</div><div class="case-in">🍽️ Hospitality · 5 Venues</div></div><div class="case-bd"><div class="cs-row"><div class="cs"><div class="cs-v">22h</div><div class="cs-l">Saved/wk</div></div><div class="cs"><div class="cs-v">+156%</div><div class="cs-l">Engagement</div></div><div class="cs"><div class="cs-v">4.9★</div><div class="cs-l">Rating</div></div></div><p class="case-desc">Social content calendar, AI review response system, and WhatsApp reservation bot across 5 venues.</p></div></div>
+      <div class="case rv d1"><div class="case-hd" style="background:#EDFBF3;"><div class="case-co">SwiftLaw Partners</div><div class="case-in">⚖️ Legal · Mid-Size Firm</div></div><div class="case-bd"><div class="cs-row"><div class="cs"><div class="cs-v">-65%</div><div class="cs-l">Intake time</div></div><div class="cs"><div class="cs-v">+40%</div><div class="cs-l">Conversions</div></div><div class="cs"><div class="cs-v">0</div><div class="cs-l">Missed</div></div></div><p class="case-desc">Automated intake qualification, document chasing, and deadline tracking — freeing partners for billable work.</p></div></div>
+      <div class="case rv d2"><div class="case-hd" style="background:#F5EEFF;"><div class="case-co">NovaTech SME</div><div class="case-in">💻 Tech · B2B Software</div></div><div class="case-bd"><div class="cs-row"><div class="cs"><div class="cs-v">2.8×</div><div class="cs-l">Pipeline</div></div><div class="cs"><div class="cs-v">-50%</div><div class="cs-l">Cost/lead</div></div><div class="cs"><div class="cs-v">100%</div><div class="cs-l">Response</div></div></div><p class="case-desc">Instant AI lead response, LinkedIn automation, and full inbound nurture sequence converting on autopilot.</p></div></div>
+      <div class="case rv d3"><div class="case-hd" style="background:#FFFAED;"><div class="case-co">AlphaFit Studios</div><div class="case-in">💪 Fitness · Gym Chain</div></div><div class="case-bd"><div class="cs-row"><div class="cs"><div class="cs-v">+92%</div><div class="cs-l">Trial conv.</div></div><div class="cs"><div class="cs-v">-30%</div><div class="cs-l">Churn</div></div><div class="cs"><div class="cs-v">8×</div><div class="cs-l">Reach</div></div></div><p class="case-desc">AI trial onboarding, reactivation campaigns, and social content engine across 4 gym locations.</p></div></div>
+    </div>
+  </div>
+  <div class="cta-band rv"><div class="cta-in"><h2>Your business could be <em>next.</em></h2><p>Get a free audit — discover how much time and revenue you could unlock.</p><button class="btn-w" onclick="go('contact')"><span>Get Free AI Audit</span><span class="arr">→</span></button></div></div>
+  <footer><div class="foot-in"><div class="foot-bot" style="padding-top:0;border-top:none;"><p class="foot-copy">© 2025 Nexora Ai<em>.</em></p><div class="soc"><a class="sb2">in</a><a class="sb2">𝕏</a></div></div></div></footer>
+</div>
+
+
+<!-- ABOUT PAGE -->
+<div id="page-about" class="page">
+  <div class="sw">
+    <div class="about-split">
+      <div class="rv">
+        <div class="lbl">About Nexora Ai</div>
+        <h1 class="h2">We make AI<br><span style="color:var(--coral)">practical.</span></h1>
+        <p style="font-size:17px;color:var(--g600);line-height:1.8;margin-bottom:16px;">Founded with one belief: AI should work for businesses, not the other way around. Too many SMEs are overwhelmed by tech they don't understand. We change that.</p>
+        <p style="font-size:17px;color:var(--g600);line-height:1.8;margin-bottom:16px;">Our team of AI engineers, automation specialists, and business strategists partner with you to find real opportunities — then build tools that deliver measurable results.</p>
+        <p style="font-size:17px;color:var(--g600);line-height:1.8;">No hype. No jargon. Just automation that saves time, grows revenue, and gives your team their focus back.</p>
+        <div class="avals">
+          <div class="aval"><div class="aval-ic">🎯</div><h4>Results First</h4><p>We measure everything. If it doesn't move a metric, we don't build it.</p></div>
+          <div class="aval"><div class="aval-ic">🤝</div><h4>True Partnership</h4><p>We work alongside you. Your growth is our growth.</p></div>
+          <div class="aval"><div class="aval-ic">⚡</div><h4>Move Fast</h4><p>Discovery to deployment in days, not months.</p></div>
+          <div class="aval"><div class="aval-ic">🔒</div><h4>Built to Trust</h4><p>Enterprise-grade security and privacy in every solution.</p></div>
+        </div>
+      </div>
+      <div class="about-vis rv d2">
+        <div style="margin-bottom:22px;"><div class="foot-logo" style="font-size:22px;">Nexora Ai<span class="foot-logo-dot"></span></div><div style="font-size:13px;color:rgba(255,255,255,.35);margin-top:5px;">Intelligent Automation Agency</div></div>
+        <div class="stats2">
+          <div class="sb"><div class="sb-v">100<em>+</em></div><div class="sb-l">Businesses automated</div></div>
+          <div class="sb"><div class="sb-v">2M<em>+</em></div><div class="sb-l">Client hours saved</div></div>
+          <div class="sb"><div class="sb-v">94<em>%</em></div><div class="sb-l">Retention rate</div></div>
+          <div class="sb"><div class="sb-v">6<em style="font-size:16px"> ind</em></div><div class="sb-l">Industries served</div></div>
+        </div>
+        <div style="padding:20px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:14px;"><div style="font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.28);margin-bottom:12px;">Powered by</div><div style="display:flex;flex-wrap:wrap;gap:7px;"><span style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07);padding:5px 11px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;color:rgba(255,255,255,.6);">OpenAI GPT-4o</span><span style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07);padding:5px 11px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;color:rgba(255,255,255,.6);">Claude AI</span><span style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07);padding:5px 11px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;color:rgba(255,255,255,.6);">Make.com</span><span style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07);padding:5px 11px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;color:rgba(255,255,255,.6);">n8n</span><span style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07);padding:5px 11px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;color:rgba(255,255,255,.6);">HubSpot</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="cta-band rv"><div class="cta-in"><h2>Want to work with us?<br><em>Let's talk.</em></h2><p>We'd love to hear about your business and show you what's possible.</p><button class="btn-w" onclick="go('contact')"><span>Get in Touch</span><span class="arr">→</span></button></div></div>
+  <footer><div class="foot-in"><div class="foot-bot" style="padding-top:0;border-top:none;"><p class="foot-copy">© 2025 Nexora Ai<em>.</em></p><div class="soc"><a class="sb2">in</a><a class="sb2">𝕏</a></div></div></div></footer>
+</div>
+
+
+<!-- FAQ PAGE -->
+<div id="page-faq" class="page">
+  <div class="sw" style="max-width:860px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:56px;" class="rv"><div class="lbl" style="justify-content:center;">Frequently asked questions</div><h1 class="h2">Everything you need<br>to <span style="color:var(--coral)">know</span></h1></div>
+    <div class="faq-list">
+      <div class="faq-item rv d1"><div class="faq-q" onclick="faqToggle(this)"><span class="faq-qt">What exactly does Nexora Ai do?</span><span class="faq-ic">+</span></div><div class="faq-body"><div class="faq-ans">We build and deploy custom AI automation systems for SMEs — AI agents, lead generation, social media automation, business process automation, and custom AI tools, all tailored to your specific industry.</div></div></div>
+      <div class="faq-item rv d2"><div class="faq-q" onclick="faqToggle(this)"><span class="faq-qt">How long does it take to get started?</span><span class="faq-ic">+</span></div><div class="faq-body"><div class="faq-ans">Most clients have their first automation live within 7–14 days. We start with a free 30-minute discovery call, design a blueprint, build, then deploy directly into your existing tools — zero disruption.</div></div></div>
+      <div class="faq-item rv d3"><div class="faq-q" onclick="faqToggle(this)"><span class="faq-qt">Do I need any technical knowledge?</span><span class="faq-ic">+</span></div><div class="faq-body"><div class="faq-ans">Absolutely not. We handle everything — design, development, integration, and training. You'll have a dedicated account manager who explains everything in plain English. If you can use email, you can use our systems.</div></div></div>
+      <div class="faq-item rv d4"><div class="faq-q" onclick="faqToggle(this)"><span class="faq-qt">How much does it cost?</span><span class="faq-ic">+</span></div><div class="faq-body"><div class="faq-ans">Flexible monthly retainers start from £997/month depending on scope. Every engagement begins with a free discovery call and a clear written quote — no hidden fees, no surprises. Most clients see positive ROI within the first 30 days.</div></div></div>
+      <div class="faq-item rv d5"><div class="faq-q" onclick="faqToggle(this)"><span class="faq-qt">Will AI replace my team?</span><span class="faq-ic">+</span></div><div class="faq-body"><div class="faq-ans">No — AI augments your team, it doesn't replace them. Our goal is to eliminate the repetitive, low-value tasks that drain your team's energy, so they can focus on high-value work like building relationships, closing deals, and delivering exceptional service.</div></div></div>
+      <div class="faq-item rv d6"><div class="faq-q" onclick="faqToggle(this)"><span class="faq-qt">Is my data safe and GDPR compliant?</span><span class="faq-ic">+</span></div><div class="faq-body"><div class="faq-ans">Yes. We build all solutions with data privacy as a core principle. We're GDPR-compliant, use enterprise-grade encryption, and never share your data with third parties. Industry-specific compliance (e.g. HIPAA for healthcare) is built in where required.</div></div></div>
+      <div class="faq-item rv d1"><div class="faq-q" onclick="faqToggle(this)"><span class="faq-qt">What tools and platforms do you integrate with?</span><span class="faq-ic">+</span></div><div class="faq-body"><div class="faq-ans">We integrate with most major platforms: HubSpot, Salesforce, Zoho, Google Workspace, Microsoft 365, Calendly, Instagram, LinkedIn, TikTok, WhatsApp, Mailchimp, Shopify, WordPress, and many more. Ask us about your specific stack.</div></div></div>
+      <div class="faq-item rv d2"><div class="faq-q" onclick="faqToggle(this)"><span class="faq-qt">What support do you provide after launch?</span><span class="faq-ic">+</span></div><div class="faq-body"><div class="faq-ans">All clients receive ongoing support, monitoring, and optimisation. We provide monthly performance reports, proactively suggest improvements, and your dedicated account manager is available via Slack or email — typically responding within a few hours.</div></div></div>
+    </div>
+    <div style="text-align:center;margin-top:44px;" class="rv"><button class="btn-p" onclick="go('contact')"><span>Still have questions? Talk to us</span><span class="arr">→</span></button></div>
+  </div>
+  <div style="margin-top:80px;" class="cta-band rv"><div class="cta-in"><h2>Ready to see it <em>in action?</em></h2><p>Book a free discovery call — we'll show you exactly what's possible for your business.</p><button class="btn-w" onclick="go('contact')"><span>Book Free Call</span><span class="arr">→</span></button></div></div>
+  <footer><div class="foot-in"><div class="foot-bot" style="padding-top:0;border-top:none;"><p class="foot-copy">© 2025 Nexora Ai<em>.</em></p><div class="soc"><a class="sb2">in</a><a class="sb2">𝕏</a></div></div></div></footer>
+</div>
+
+
+<!-- CONTACT PAGE -->
+<div id="page-contact" class="page">
+  <div class="sw">
+    <div class="sh rv"><div class="lbl">Get in touch</div><h1 class="h2">Let's build something<br><span style="color:var(--coral)">great together.</span></h1></div>
+    <div class="contact-grid">
+      <div class="rv">
+        <p style="font-size:16px;color:var(--g600);line-height:1.78;margin-bottom:30px;">Book a free 30-minute discovery call — no commitment. We'll map your automation roadmap and show you exactly what's possible.</p>
+        <div class="cd-row"><div class="cd-ic">📧</div><div><div class="cd-t">Email</div><div class="cd-v">hello@nexoraai.com</div></div></div>
+        <div class="cd-row"><div class="cd-ic">📞</div><div><div class="cd-t">Phone</div><div class="cd-v">+44 (0) 20 7946 0321</div></div></div>
+        <div class="cd-row"><div class="cd-ic">📍</div><div><div class="cd-t">Office</div><div class="cd-v">London, UK · Remote-first worldwide</div></div></div>
+        <div class="cd-row"><div class="cd-ic">🕐</div><div><div class="cd-t">Response time</div><div class="cd-v">Within 2 business hours</div></div></div>
+        <div style="margin-top:26px;background:var(--g50);border:1px solid var(--g100);border-radius:16px;padding:24px;"><div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;margin-bottom:7px;letter-spacing:-.02em;">Free Discovery Call</div><p style="font-size:14px;color:var(--g600);line-height:1.65;margin-bottom:13px;">30 minutes, no commitment. We'll audit your workflows and show you exactly where AI saves time and grows revenue.</p><button class="btn-p" style="font-size:14px;padding:11px 20px;"><span>Book a Call</span><span class="arr">→</span></button></div>
+      </div>
+      <div class="form-wrap rv d2">
+        <div class="frow"><div class="fg"><label>First Name</label><input type="text" placeholder="John"></div><div class="fg"><label>Last Name</label><input type="text" placeholder="Smith"></div></div>
+        <div class="fg"><label>Business Email</label><input type="email" placeholder="john@company.com"></div>
+        <div class="fg"><label>Company</label><input type="text" placeholder="Company Name"></div>
+        <div class="fg"><label>Industry</label><select><option value="">Select your industry</option><option>Healthcare / Clinic</option><option>Real Estate</option><option>Legal</option><option>Restaurant / Hospitality</option><option>Retail / E-Commerce</option><option>Professional Services</option><option>Other</option></select></div>
+        <div class="fg"><label>What do you want to automate?</label><select><option value="">Select a service</option><option>AI Agent / Chatbot</option><option>Lead Generation</option><option>Social Media Automation</option><option>Website Renewal</option><option>Business Process Automation</option><option>Not sure — need advice</option></select></div>
+        <div class="fg"><label>Tell us about your business</label><textarea placeholder="Describe your challenges and what you'd like AI to solve..."></textarea></div>
+        <button class="btn-p" style="justify-content:center;font-size:15px;padding:14px;" onclick="submitForm(this)"><span>Send Message</span><span class="arr">→</span></button>
+      </div>
+    </div>
+  </div>
+  <footer style="margin-top:80px;"><div class="foot-in"><div class="foot-bot" style="padding-top:0;border-top:none;"><p class="foot-copy">© 2025 Nexora Ai<em>.</em></p><div class="soc"><a class="sb2">in</a><a class="sb2">𝕏</a></div></div></div></footer>
+</div>
+
+
+<script>
+/* ── Cursor ── */
+const c=document.getElementById('cur'),r=document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;c.style.left=mx+'px';c.style.top=my+'px';});
+(function l(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;r.style.left=rx+'px';r.style.top=ry+'px';requestAnimationFrame(l);})();
+document.querySelectorAll('button,a,.bc,.ic,.case,.tc,.ar,.wi,.faq-item,.flow-step').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{r.style.width='54px';r.style.height='54px';r.style.opacity='.18';c.style.transform='translate(-50%,-50%) scale(.5)';});
+  el.addEventListener('mouseleave',()=>{r.style.width='38px';r.style.height='38px';r.style.opacity='.35';c.style.transform='translate(-50%,-50%) scale(1)';});
+});
+
+/* ── Navigation ── */
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pg=document.getElementById('page-'+id);
+  if(pg){pg.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});setTimeout(doReveal,80);}
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('on'));
+  const nl=document.getElementById('nl-'+id);if(nl)nl.classList.add('on');
+}
+function navTo(id){go(id);document.getElementById('mob').classList.remove('open');}
+function toggleMob(){document.getElementById('mob').classList.toggle('open');}
+window.addEventListener('scroll',()=>document.getElementById('mainNav').classList.toggle('sh',scrollY>10));
+
+/* ── Reveal ── */
+function doReveal(){
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on');});},{threshold:.08});
+  document.querySelectorAll('.page.active .rv,.page.active .rvl').forEach(el=>io.observe(el));
+}
+
+/* ── FAQ ── */
+function faqToggle(q){
+  const it=q.closest('.faq-item'),open=it.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+  if(!open)it.classList.add('open');
+}
+
+/* ── ROI Calculator ── */
+function calcROI(){
+  const t=+document.getElementById('sl-t').value,h=+document.getElementById('sl-h').value,r2=+document.getElementById('sl-r').value;
+  document.getElementById('rv-team').textContent=t+' people';
+  document.getElementById('rv-hrs').textContent=h+' hours';
+  document.getElementById('rv-rate').textContent='£'+r2+'/hr';
+  const m=Math.round(t*h*r2*4*.65/100)*100;
+  document.getElementById('roi-out').textContent='£'+m.toLocaleString();
+}
+calcROI();
+
+/* ── Form submit ── */
+function submitForm(btn){
+  btn.querySelector('span').textContent='✓ Sent! We\'ll reply within 2 hours.';
+  const a=btn.querySelector('.arr');if(a)a.style.display='none';
+  btn.style.background='#22c55e';btn.disabled=true;
+}
+
+/* ── Lead chart ── */
+function buildLeadChart(){
+  const el=document.getElementById('leadChart');
+  if(!el)return;
+  const data=[
+    {lbl:'Mon',nexora:2,avg:180},
+    {lbl:'Tue',nexora:1,avg:240},
+    {lbl:'Wed',nexora:2,avg:120},
+    {lbl:'Thu',nexora:1,avg:200},
+    {lbl:'Fri',nexora:2,avg:160},
+  ];
+  const maxV=240;
+  el.innerHTML='';
+  data.forEach(d=>{
+    const g=document.createElement('div');
+    g.className='bar-wrap';
+    // two bars per group
+    const h1=Math.round((d.nexora/maxV)*100);
+    const h2=Math.round((d.avg/maxV)*100);
+    g.innerHTML=`
+      <div style="display:flex;gap:3px;align-items:flex-end;height:100px;width:100%;">
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;">
+          <div style="width:100%;border-radius:5px 5px 0 0;background:var(--coral);height:${h1}px;animation:fadeUp .6s ease both;"></div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;">
+          <div style="width:100%;border-radius:5px 5px 0 0;background:var(--g200);height:${h2}px;animation:fadeUp .6s .1s ease both;"></div>
+        </div>
+      </div>
+      <div class="bar-lbl">${d.lbl}</div>
+    `;
+    el.appendChild(g);
+  });
+}
+
+/* ── Init ── */
+setTimeout(doReveal,200);
+buildLeadChart();
+</script>
+</body>
+</html>
